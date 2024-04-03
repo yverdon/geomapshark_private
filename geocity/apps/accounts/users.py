@@ -52,18 +52,9 @@ def get_integrator_permissions():
 
 
 def get_users_list_for_integrator_admin(user, remove_anonymous=False):
-    qs = User.objects.select_related("userprofile")
-
-    # Remove anonymous users if flag at true or user is not a superuser
-    anonymous_users = []
-    if remove_anonymous or not user.is_superuser:
-        for qs_user in qs:
-            if qs_user.userprofile.is_anonymous:
-                anonymous_users.append(qs_user.pk)
-        qs = qs.exclude(pk__in=anonymous_users)
-
-    # Integrators can only view users for restricted email domains.
-    if not user.is_superuser:
+    if user.is_superuser:
+        qs = User.objects.select_related("userprofile")
+    else:
         user_integrator_group = user.groups.get(
             permit_department__is_integrator_admin=True
         )
@@ -83,7 +74,7 @@ def get_users_list_for_integrator_admin(user, remove_anonymous=False):
         ]
 
         qs = (
-            qs.annotate(
+            User.objects.annotate(
                 email_domain=Substr("email", StrIndex("email", Value("@")) + 1),
             )
             # hide users not belonging to the actual integrator
@@ -95,5 +86,13 @@ def get_users_list_for_integrator_admin(user, remove_anonymous=False):
                 | Q(groups__permit_department__is_integrator_admin=True),
             ).distinct()
         )
+
+    # Remove anonymous users if flag at true or user is not a superuser
+    anonymous_users = []
+    if remove_anonymous or not user.is_superuser:
+        for qs_user in qs:
+            if qs_user.userprofile.is_anonymous:
+                anonymous_users.append(qs_user.pk)
+        qs = qs.exclude(pk__in=anonymous_users)
 
     return qs
