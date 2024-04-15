@@ -612,9 +612,9 @@ class AgendaAPITestCase(TestCase):
         # Check api_light=False field appears in detailed
         self.assertContains(response, "location")
 
-    def test_filters_only_appears_with_domain(self):
+    def test_filters_only_appears_with_domain_except_domain_filter(self):
         """
-        A domain is required to show filters.
+        A domain is required to show filters except for domain filter itself.
         """
 
         # ////////////////////////////////////#
@@ -628,8 +628,20 @@ class AgendaAPITestCase(TestCase):
         # Check if request is ok
         self.assertEqual(response.status_code, 200)
 
-        # Check if filters is None
-        self.assertEqual(response_json["filters"], None)
+        # Check if filters is not None
+        self.assertNotEqual(response_json["filters"], None)
+
+        # Check if domain filter is present
+        is_domain_present = any(
+            item.get("slug") == "domain" for item in response_json["filters"]
+        )
+        self.assertTrue(is_domain_present)
+
+        # Check if domain filter is not present
+        is_category_present = any(
+            item.get("slug") == "category" for item in response_json["filters"]
+        )
+        self.assertFalse(is_category_present)
 
         # ////////////////////////////////////#
         # With domain
@@ -644,6 +656,18 @@ class AgendaAPITestCase(TestCase):
 
         # Check if filters is not None
         self.assertNotEqual(response_json["filters"], None)
+
+        # Check if domain filter is present
+        is_domain_present = any(
+            item.get("slug") == "domain" for item in response_json["filters"]
+        )
+        self.assertTrue(is_domain_present)
+
+        # Check if domain filter is present
+        is_category_present = any(
+            item.get("slug") == "category" for item in response_json["filters"]
+        )
+        self.assertTrue(is_category_present)
 
     def test_elements_are_ordered_by_featured_and_dates(self):
         """
