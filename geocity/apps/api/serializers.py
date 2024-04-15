@@ -960,14 +960,24 @@ def get_available_filters_for_agenda_as_qs(domain):
     if not domain:
         return None
 
-    entity = (
-        AdministrativeEntity.objects.filter(
-            tags__name=domain,
-            forms__agenda_visible=True,
-        )
-        .distinct()
-        .first()
-    )  # get can return an error
+    if domain.isdigit():
+        entity = (
+            AdministrativeEntity.objects.filter(
+                id=domain,
+                forms__agenda_visible=True,
+            )
+            .distinct()
+            .first()
+        )  # get can return an error
+    else:
+        entity = (
+            AdministrativeEntity.objects.filter(
+                tags__name=domain,
+                forms__agenda_visible=True,
+            )
+            .distinct()
+            .first()
+        )  # get can return an error
 
     available_filters = Field.objects.filter(forms__administrative_entities=entity)
 
@@ -987,24 +997,37 @@ def get_available_filters_for_agenda_as_json(domain):
     Returns the list of filters for api
     """
     available_filters = get_available_filters_for_agenda_as_qs(domain)
-
-    if not available_filters:
-        return None
-
     agenda_filters = []
-    for available_filter in available_filters:
-        actual_filter = {
-            "label": available_filter.name,
-            "slug": available_filter.api_name,
-        }
-        actual_filter["options"] = [
-            {
-                "id": key,
-                "label": choice.strip(),
+
+    # Domain filter available for simple and detailed agenda
+    domain_filter = {
+        "label": "Choix de l'agenda",
+        "slug": "domain",
+    }
+    entities = AdministrativeEntity.objects.filter(
+        forms__agenda_visible=True, forms__is_public=True
+    )
+    domain_filter["options"] = [
+        {"id": entity.id, "label": entity.agenda_name} for entity in entities
+    ]
+    agenda_filters.append(domain_filter)
+
+    if available_filters:
+        for available_filter in available_filters:
+            actual_filter = {
+                "label": available_filter.name,
+                "slug": available_filter.api_name,
             }
-            for key, choice in enumerate(available_filter.choices.strip().splitlines())
-        ]
-        agenda_filters.append(actual_filter)
+            actual_filter["options"] = [
+                {
+                    "id": key,
+                    "label": choice.strip(),
+                }
+                for key, choice in enumerate(
+                    available_filter.choices.strip().splitlines()
+                )
+            ]
+            agenda_filters.append(actual_filter)
     return agenda_filters
 
 

@@ -577,7 +577,7 @@ class AgendaViewSet(viewsets.ReadOnlyModelViewSet):
         This view has a detailed result and a simple result
         The detailed result is built with AgendaResultsSetPagination,
         this is required to be able to make pagination and return features and filters
-        The simple result just return informations for une submission
+        The simple result just return informations for une submission and lists available domains
         The order is important, agenda-embed has no logic, everything is set here
         """
         submissions = (
@@ -598,9 +598,16 @@ class AgendaViewSet(viewsets.ReadOnlyModelViewSet):
 
         if "domain" in query_params:
             domain = query_params["domain"]
-            entity = AdministrativeEntity.objects.filter(
-                tags__name=domain
-            ).first()  # get can return an error
+
+            # domain is a number
+            if domain.isdigit():
+                entity = AdministrativeEntity.objects.filter(
+                    id=domain
+                ).first()  # get can return an error
+            else:  # domain is a text
+                entity = AdministrativeEntity.objects.filter(
+                    tags__name=domain
+                ).first()  # get can return an error
 
             # To validate a request and show it in agenda, an user need to be pilot of his own entity and validator for other entities.
             # Retrieve pilots of entity
