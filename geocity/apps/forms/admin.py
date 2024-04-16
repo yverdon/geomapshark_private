@@ -15,6 +15,7 @@ from geocity.apps.accounts.admin import (
     filter_for_user,
 )
 from geocity.apps.accounts.models import PUBLIC_TYPE_CHOICES, AdministrativeEntity
+from geocity.apps.submissions.models import Submission, SubmissionWorkflowStatus
 
 from . import models
 
@@ -164,6 +165,16 @@ class FormAdminForm(forms.ModelForm):
             self.instance.has_geometry_polygon = False
 
             self.instance.can_have_multiple_ranges = False
+
+        """
+        Set required status when public inquiry module is enabled
+        """
+
+        if self.cleaned_data["publication_enabled"]:
+            SubmissionWorkflowStatus.objects.update_or_create(
+                status=Submission.STATUS_INQUIRY_IN_PROGRESS,
+                administrative_entity=self.cleaned_data["administrative_entities"][0],
+            )
 
         return super().save(*args, **kwargs)
 
