@@ -117,6 +117,7 @@ def submission_summary(context, submission):
         "requires_payment": requires_payment,
         "selected_price": selected_price,
         "is_validator": is_validator,
+        "user_is_author_of_submission": user_is_author_of_submission,
         "display_amend_properties": display_amend_properties,
     }
 
