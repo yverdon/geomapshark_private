@@ -1926,7 +1926,7 @@ class SubmissionAmendField(models.Model):
     )
     is_mandatory = models.BooleanField(_("obligatoire"), default=False)
     is_visible_by_author = models.BooleanField(
-        _("Visible par l'auteur de la demande"), default=True
+        _("Visible par l'auteur de la demande"), default=False
     )
     is_visible_by_validators = models.BooleanField(
         _("Visible par les validateurs"), default=False
