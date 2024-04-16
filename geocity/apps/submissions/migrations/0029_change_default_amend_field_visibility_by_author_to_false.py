@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('submissions', '0028_historicalsubmission_status_agenda_and_more'),
+        ("submissions", "0028_historicalsubmission_status_agenda_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='submissionamendfield',
-            name='is_visible_by_author',
-            field=models.BooleanField(default=False, verbose_name="Visible par l'auteur de la demande"),
+            model_name="submissionamendfield",
+            name="is_visible_by_author",
+            field=models.BooleanField(
+                default=False, verbose_name="Visible par l'auteur de la demande"
+            ),
         ),
     ]
