@@ -775,7 +775,7 @@ class FieldsForm(PartialValidationMixin, forms.Form):
             **default_kwargs,
             "validators": [services.validate_file],
             "help_text": dynamic_help_text,
-            "widget": ClearableFileInputWidget(attrs={"accept": allowed_mimetypes_str}),
+            "widget": forms.ClearableFileInput(attrs={"accept": allowed_mimetypes_str}),
         }
 
     def get_list_single_field_kwargs(self, field, default_kwargs):
@@ -1573,10 +1573,6 @@ class GeometryWidget(geoforms.OSMWidget):
                 "libs/js/jquery-ui-custom/jquery-ui.min.js",
             ),
         )
-
-
-class ClearableFileInputWidget(forms.ClearableFileInput):
-    pass
 
 
 class SubmissionGeoTimeForm(forms.ModelForm):
