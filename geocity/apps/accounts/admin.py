@@ -502,7 +502,8 @@ class GroupAdminForm(forms.ModelForm):
 
 class UserInline(admin.TabularInline):
     model = Group.user_set.through
-    can_delete = True
+    readonly_fields = ("user",)
+    can_delete = False
     extra = 0
     verbose_name = _("Utilisateur membre du groupe")
     verbose_name_plural = _("Utilisateurs membres du groupe")
