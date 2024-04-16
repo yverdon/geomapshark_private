@@ -278,7 +278,7 @@ pip-tools==7.4.0
     # via -r requirements_dev.in
 platformdirs==4.2.0
     # via virtualenv
-postfinancecheckout==4.2.0
+postfinancecheckout==5.1.0
     # via -r requirements.txt
 pre-commit==3.6.2
     # via -r requirements_dev.in
