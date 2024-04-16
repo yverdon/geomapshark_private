@@ -16,6 +16,15 @@ class PrivateFileSystemStorage(FileSystemStorage):
         super().__init__(location=settings.PRIVATE_MEDIA_ROOT, base_url=None)
 
 
+class PublicFileSystemStorage(FileSystemStorage):
+    """
+    Storage for files that CAN ALLWAYS be directly exposed by the web server.
+    """
+
+    def __init__(self):
+        super().__init__(location=settings.PUBLIC_MEDIA_ROOT, base_url=None)
+
+
 # extend django gis osm openlayers widget
 class GeometryWidget(geoforms.OSMWidget):
     template_name = "geometrywidget/geometrywidget.html"
