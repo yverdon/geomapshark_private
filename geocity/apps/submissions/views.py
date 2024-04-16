@@ -1139,6 +1139,8 @@ def manage_steps_anonymous_form(form_category, entity, request, anonymous_forms)
             temp_user = request.user
             logout(request)
             temp_user.delete()
+            # delete draft submission
+            submission.delete()
 
             if quick_access_slug:
                 anonymous_form_url = request.build_absolute_uri(
