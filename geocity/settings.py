@@ -568,6 +568,7 @@ STATIC_URL = os.environ["STATIC_URL"]
 STATIC_ROOT = "/static_root"
 
 PRIVATE_MEDIA_ROOT = "/private_documents"
+PUBLIC_MEDIA_ROOT = "/public_documents"
 
 ARCHIVE_ROOT = os.environ.get("ARCHIVE_ROOT", "/archive")
 

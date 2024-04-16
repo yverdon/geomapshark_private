@@ -26,7 +26,7 @@ from geocity.apps.accounts.decorators import (
     check_mandatory_2FA,
     permanent_user_required,
 )
-from geocity.fields import PrivateFileSystemStorage
+from geocity.fields import PrivateFileSystemStorage, PublicFileSystemStorage
 
 from . import forms, models
 from .users import is_2FA_mandatory
@@ -398,6 +398,20 @@ def administrative_entity_file_download(request, path):
 
     mime_type, encoding = mimetypes.guess_type(path)
     storage = PrivateFileSystemStorage()
+
+    try:
+        return StreamingHttpResponse(storage.open(path), content_type=mime_type)
+    except IOError:
+        raise Http404
+
+
+def site_profile_custom_image(request, path):
+    """
+    Serve public image for template customization
+    """
+
+    mime_type, encoding = mimetypes.guess_type(path)
+    storage = PublicFileSystemStorage()
 
     try:
         return StreamingHttpResponse(storage.open(path), content_type=mime_type)
