@@ -1079,7 +1079,6 @@ class Field(models.Model):
         if forms_fields:
             list_content = []
             for ff in forms_fields:
-                print(ff)
                 url = reverse(
                     "admin:forms_form_change", kwargs={"object_id": ff.form.id}
                 )
