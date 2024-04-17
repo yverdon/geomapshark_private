@@ -644,6 +644,7 @@ class PaymentSettingsAdmin(IntegratorFilterMixin, admin.ModelAdmin):
 
 @admin.register(models.Field)
 class FieldAdmin(IntegratorFilterMixin, admin.ModelAdmin):
+
     form = FieldAdminForm
     list_display = [
         "sortable_str",
@@ -705,6 +706,8 @@ class FieldAdmin(IntegratorFilterMixin, admin.ModelAdmin):
     def form_list(self, obj):
 
         return obj.get_form_list()
+
+    form_list.short_description = _("Formulaires")
 
     def sortable_str(self, obj):
         sortable_str = (
