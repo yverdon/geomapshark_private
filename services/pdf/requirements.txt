@@ -15,10 +15,12 @@ charset-normalizer==3.3.2
 cssselect2==0.7.0
     # via weasyprint
 fonttools[woff]==4.47.2
-    # via weasyprint
+    # via
+    #   fonttools
+    #   weasyprint
 html5lib==1.1
     # via weasyprint
-idna==3.7
+idna==3.6
     # via requests
 pillow==10.2.0
     # via weasyprint
