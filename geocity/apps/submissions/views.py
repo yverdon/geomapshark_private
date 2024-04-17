@@ -1119,6 +1119,7 @@ def manage_steps_anonymous_form(form_category, entity, request, anonymous_forms)
     # this combination must be set on submission object
     if len(anonymous_forms) == 1:
         submission.forms.set(anonymous_forms)
+        quick_access_slug = anonymous_forms[0].quick_access_slug
 
     steps = get_anonymous_steps(
         form_category=form_category,
@@ -1126,10 +1127,25 @@ def manage_steps_anonymous_form(form_category, entity, request, anonymous_forms)
         submission=submission,
         current_site=get_current_site(request),
     )
-
     for step_type, step in steps.items():
         if step and step.enabled and not step.completed:
             return redirect(step.url)
+
+    # If a form was filled but never ended by the same user, on the same browser, the temp user must be cleared and the process restarted from the beginning
+    if request.user.userprofile.is_temporary:
+        temp_user = request.user
+        logout(request)
+        temp_user.delete()
+        # delete draft submission
+        submission.delete()
+
+        if quick_access_slug:
+            anonymous_form_url = request.build_absolute_uri(
+                f'{reverse("submissions:anonymous_submission")}?form={quick_access_slug}'
+            )
+            return redirect(anonymous_form_url)
+        else:
+            raise Http404
 
 
 def get_anonymous_submission_by_tags(request, entityfilter, typefilter):
