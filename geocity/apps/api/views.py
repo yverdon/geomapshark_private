@@ -554,7 +554,7 @@ class AgendaViewSet(viewsets.ReadOnlyModelViewSet):
     Submissions are filtered by date
     Images are provided through thumbor https://thumbor.readthedocs.io/en/latest/imaging.html
     Arguments that can be supplied in the url :
-    - ?domain can be given through the component in html, it corresponds to the entity tags (mots-clés)
+    - ?domain can be given through the component in html, can be a comma separated list, it corresponds to the entity tags (mots-clés)
     - ?starts_at
     - ?ends_at
     - ?width
@@ -597,21 +597,19 @@ class AgendaViewSet(viewsets.ReadOnlyModelViewSet):
         domain = None
 
         if "domain" in query_params:
-            domain = query_params["domain"]
-            entity = AdministrativeEntity.objects.filter(
-                tags__name=domain
-            ).first()  # get can return an error
+            domains = query_params["domain"].split(",")
+            entities = AdministrativeEntity.objects.filter(tags__name__in=domains)
 
             # To validate a request and show it in agenda, an user need to be pilot of his own entity and validator for other entities.
             # Retrieve pilots of entity
             pilot_of_entity = User.objects.filter(
-                groups__permit_department__administrative_entity=entity,
+                groups__permit_department__administrative_entity__in=entities,
                 groups__permit_department__is_backoffice=True,
             ).values("id")
 
             # Check agenda submissions is validated by any user on the pilot group of it's own entity
             submissions = submissions.filter(
-                Q(administrative_entity=entity)
+                Q(administrative_entity__in=entities)
                 | Q(validations__validated_by__in=pilot_of_entity)
             )
 
