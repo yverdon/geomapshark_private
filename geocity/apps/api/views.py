@@ -644,10 +644,10 @@ class AgendaViewSet(viewsets.ReadOnlyModelViewSet):
         if domains and len(domains) > 1:
             return submissions
         elif domains:
-            domain = domains[0]
+            domains = domains[0]
 
         # List every available filter
-        available_filters = serializers.get_available_filters_for_agenda_as_qs(domain)
+        available_filters = serializers.get_available_filters_for_agenda_as_qs(domains)
 
         if not available_filters:
             return submissions
