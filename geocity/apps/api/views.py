@@ -643,7 +643,7 @@ class AgendaViewSet(viewsets.ReadOnlyModelViewSet):
         # There's no filters available if there's multiple domains
         if domains and len(domains) > 1:
             return submissions
-        else:
+        elif domains:
             domain = domains[0]
 
         # List every available filter
