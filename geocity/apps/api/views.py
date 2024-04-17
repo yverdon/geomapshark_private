@@ -594,7 +594,7 @@ class AgendaViewSet(viewsets.ReadOnlyModelViewSet):
         # List params given by the request as query_params
         query_params = self.request.query_params
         # Filter domain (administrative_entity) to permit sites to filter on their own domain (e.g.: sports, culture)
-        domain = None
+        domains = None
 
         if "domain" in query_params:
             domains = query_params["domain"].split(",")
@@ -639,6 +639,13 @@ class AgendaViewSet(viewsets.ReadOnlyModelViewSet):
                 Q(selected_forms__field_values__value__val__contains=query)
                 | Q(selected_forms__field_values__value__val__icontains=query)
             )
+
+        # There's no filters available if there's multiple domains
+        if len(domains) > 1:
+            return submissions
+        else:
+            domain = domains[0]
+
         # List every available filter
         available_filters = serializers.get_available_filters_for_agenda_as_qs(domain)
 
