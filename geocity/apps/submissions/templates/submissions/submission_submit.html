@@ -9,6 +9,15 @@
   <link rel="stylesheet" type="text/css" href="{% static 'libs/js/jquery-ui-custom/jquery-ui.min.css' %}">
 {% endblock %}
 
+{% block printbutton %}
+  {% if not incomplete_steps %}
+  <li class="nav-item d-flex align-items-center" title="{% translate 'Imprimer cette page' %}">
+    <a href="javascript:window.print()" class="text-secondary" role="button">
+      <i class="fa fa-print" aria-hidden="true"></i>&nbsp;{% translate "Imprimer" %}
+    </a>
+  </li>
+  {% endif %}
+{% endblock %}
 
 {% block content %}
   {% submission_progressbar steps StepType.SUBMIT %}
