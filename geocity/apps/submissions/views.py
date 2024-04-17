@@ -290,6 +290,18 @@ class SubmissionDetailView(View):
             fees_module_enabled=True
         ).exists()
 
+        statuses = list(
+            models.SubmissionWorkflowStatus.objects.get_statuses_for_administrative_entity(
+                self.submission.administrative_entity
+            ).values_list(
+                "pk", flat=True
+            )
+        )
+        classify_enabled = (
+            models.Submission.STATUS_APPROVED in statuses
+            and models.Submission.STATUS_REJECTED in statuses
+        )
+
         return {
             **kwargs,
             **{
@@ -304,6 +316,7 @@ class SubmissionDetailView(View):
                 "can_classify": permissions.can_classify_submission(
                     self.request.user, self.submission
                 ),
+                "classify_enabled": classify_enabled,
                 "has_permission_to_classify_submission": permissions.has_permission_to_classify_submission(
                     self.request.user, self.submission
                 ),
