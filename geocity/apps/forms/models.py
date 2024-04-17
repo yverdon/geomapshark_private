@@ -1072,3 +1072,19 @@ class Field(models.Model):
                 )
         else:
             self.api_name = convert_string_to_api_key(self.name)
+
+    def get_form_list(self):
+        forms_fields = self.form_fields.all().order_by("form__name", "form__id")
+
+        if forms_fields:
+            list_content = []
+            for ff in forms_fields:
+                url = reverse(
+                    "admin:forms_form_change", kwargs={"object_id": ff.form.id}
+                )
+
+                list_content.append(f"<li><a href='{url}'>{ff.form.name}</a></li>")
+            list_html = "\n".join(list_content)
+            return mark_safe(f"<ul>{list_html}</ul>")
+        else:
+            return "-"

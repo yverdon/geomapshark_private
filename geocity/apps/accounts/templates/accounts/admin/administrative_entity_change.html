@@ -4,9 +4,9 @@
 {% block object-tools-items %}
   {% if original.anonymous_user %}
     <div class="form-group">
-      <a class="btn btn-dark form-control" href="{% url "admin:auth_user_change" object_id=original.anonymous_user.user_id %}">
-        {% translate "Voir l'utilisateur anonyme" %}
-      </a>
+      <span class="btn btn-dark form-control" href="{% url "admin:auth_user_change" object_id=original.anonymous_user.user_id %}">
+        {% translate "Utilisateur anonyme déjà existant" %}
+      </span>
     </div>
   {% else %}
     <div class="form-group">
