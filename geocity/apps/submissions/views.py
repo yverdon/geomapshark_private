@@ -294,9 +294,10 @@ class SubmissionDetailView(View):
             models.SubmissionWorkflowStatus.objects.get_statuses_for_administrative_entity(
                 self.submission.administrative_entity
             ).values_list(
-                "pk", flat=True
+                "status", flat=True
             )
         )
+
         classify_enabled = (
             models.Submission.STATUS_APPROVED in statuses
             and models.Submission.STATUS_REJECTED in statuses
