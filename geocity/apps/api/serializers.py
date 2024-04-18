@@ -1001,7 +1001,13 @@ def get_available_filters_for_agenda_as_json(domains):
             forms__agenda_visible=True, forms__is_public=True, tags__name__in=domains
         )
         domain_filter["options"] = [
-            {"id": entity.id, "label": entity.agenda_name} for entity in entities
+            {
+                "id": entity.id,
+                "label": entity.agenda_name
+                if entity.agenda_name
+                else "Valeur non définie",
+            }
+            for entity in entities
         ]
         agenda_filters.append(domain_filter)
 
