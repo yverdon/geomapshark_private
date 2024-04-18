@@ -993,19 +993,17 @@ def get_available_filters_for_agenda_as_json(domains):
 
     # Category filter available for simple and detailed agenda. Example : Sport, Culture, Économie, etc...
     if domains and len(domains) > 1:
-        print("OUI")
-        print(len(domains))
-        category_filter = {
+        domain_filter = {
             "label": "Catégorie",
-            "slug": "category",
+            "slug": "domain_filter",
         }
         entities = AdministrativeEntity.objects.filter(
             forms__agenda_visible=True, forms__is_public=True, tags__name__in=domains
         )
-        category_filter["options"] = [
+        domain_filter["options"] = [
             {"id": entity.id, "label": entity.agenda_name} for entity in entities
         ]
-        agenda_filters.append(category_filter)
+        agenda_filters.append(domain_filter)
 
     if available_filters:
         for available_filter in available_filters:
@@ -1023,7 +1021,7 @@ def get_available_filters_for_agenda_as_json(domains):
                 )
             ]
             agenda_filters.append(actual_filter)
-    return agenda_filters
+    return agenda_filters if agenda_filters != [] else None
 
 
 class AgendaSerializer(serializers.Serializer):

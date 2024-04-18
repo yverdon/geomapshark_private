@@ -613,9 +613,9 @@ class AgendaViewSet(viewsets.ReadOnlyModelViewSet):
         # Filter domain (administrative_entity) to permit sites to filter on their own domain (e.g.: sports, culture)
         domains = None
 
-        if "category" in query_params:
-            categories = query_params.getlist("category")
-            entities = AdministrativeEntity.objects.filter(id__in=categories)
+        if "domain_filter" in query_params:
+            domain_filter = query_params.getlist("domain_filter")
+            entities = AdministrativeEntity.objects.filter(id__in=domain_filter)
             submissions = get_agenda_submissions(entities, submissions)
 
         elif "domain" in query_params:

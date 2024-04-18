@@ -612,9 +612,9 @@ class AgendaAPITestCase(TestCase):
         # Check api_light=False field appears in detailed
         self.assertContains(response, "location")
 
-    def test_filters_only_appears_with_domain_except_domain_filter(self):
+    def test_filters_only_appears_with_domain(self):
         """
-        A domain is required to show filters except for domain filter itself.
+        A domain is required to show filters.
         """
 
         # ////////////////////////////////////#
@@ -628,20 +628,8 @@ class AgendaAPITestCase(TestCase):
         # Check if request is ok
         self.assertEqual(response.status_code, 200)
 
-        # Check if filters is not None
-        self.assertNotEqual(response_json["filters"], None)
-
-        # Check if domain filter is present
-        is_domain_present = any(
-            item.get("slug") == "domain" for item in response_json["filters"]
-        )
-        self.assertTrue(is_domain_present)
-
-        # Check if domain filter is not present
-        is_category_present = any(
-            item.get("slug") == "category" for item in response_json["filters"]
-        )
-        self.assertFalse(is_category_present)
+        # Check if filters is None
+        self.assertEqual(response_json["filters"], None)
 
         # ////////////////////////////////////#
         # With domain
@@ -657,15 +645,41 @@ class AgendaAPITestCase(TestCase):
         # Check if filters is not None
         self.assertNotEqual(response_json["filters"], None)
 
-        # Check if domain filter is present
-        is_domain_present = any(
-            item.get("slug") == "domain" for item in response_json["filters"]
-        )
-        self.assertTrue(is_domain_present)
-
-        # Check if domain filter is present
+        # Check if category filter is present
         is_category_present = any(
             item.get("slug") == "category" for item in response_json["filters"]
+        )
+        self.assertTrue(is_category_present)
+
+        # Check if domain_filter filter is not present
+        is_category_present = any(
+            item.get("slug") == "domain_filter" for item in response_json["filters"]
+        )
+        self.assertFalse(is_category_present)
+
+        # ////////////////////////////////////#
+        # With multiple domains
+        # ////////////////////////////////////#
+
+        # Request to agenda-list (light API) on ?domain=sit,fin
+        response = self.client.get(reverse("agenda-list"), {"domain": "sit,fin"})
+        response_json = response.json()
+
+        # Check if request is ok
+        self.assertEqual(response.status_code, 200)
+
+        # Check if filters is not None
+        self.assertNotEqual(response_json["filters"], None)
+
+        # Check if category filter is not present
+        is_category_present = any(
+            item.get("slug") == "category" for item in response_json["filters"]
+        )
+        self.assertFalse(is_category_present)
+
+        # Check if domain_filter filter is present
+        is_category_present = any(
+            item.get("slug") == "domain_filter" for item in response_json["filters"]
         )
         self.assertTrue(is_category_present)
 
@@ -761,6 +775,46 @@ class AgendaAPITestCase(TestCase):
 
         # Check if there's only 1 feature
         self.assertEqual(response_json["count"], 1)
+
+        # Check if this is the first_submission
+        self.assertEqual(
+            response_json["features"][0]["properties"]["id"],
+            self.sit_first_submission.pk,
+        )
+
+        # ////////////////////////////////////#
+        # Multiple domain
+        # ////////////////////////////////////#
+
+        # Request to agenda-list (light API) on ?domain=sit,fin
+        response = self.client.get(reverse("agenda-list"), {"domain": "sit,fin"})
+        response_json = response.json()
+
+        # Check if request is ok
+        self.assertEqual(response.status_code, 200)
+
+        # Check if there's 5 features
+        self.assertEqual(response_json["count"], 5)
+
+        # ////////////////////////////////////#
+        # Filter by domain_filter
+        # ////////////////////////////////////#
+
+        # Request to agenda-list (light API) on ?domain=sit,fin
+        response = self.client.get(
+            reverse("agenda-list"),
+            {
+                "domain": "sit,fin",
+                "domain_filter": self.sit_first_submission.administrative_entity.pk,
+            },
+        )
+        response_json = response.json()
+
+        # Check if request is ok
+        self.assertEqual(response.status_code, 200)
+
+        # Check if there's 4 features and not 5 (4 sit and 1 fin)
+        self.assertEqual(response_json["count"], 4)
 
         # Check if this is the first_submission
         self.assertEqual(
