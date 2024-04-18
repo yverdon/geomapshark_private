@@ -554,7 +554,7 @@ class AgendaViewSet(viewsets.ReadOnlyModelViewSet):
     Submissions are filtered by date
     Images are provided through thumbor https://thumbor.readthedocs.io/en/latest/imaging.html
     Arguments that can be supplied in the url :
-    - ?domain can be given through the component in html, it corresponds to the entity tags (mots-clés)
+    - ?domain can be given through the component in html, can be a comma separated list, it corresponds to the entity tags (mots-clés)
     - ?starts_at
     - ?ends_at
     - ?width
@@ -594,31 +594,22 @@ class AgendaViewSet(viewsets.ReadOnlyModelViewSet):
         # List params given by the request as query_params
         query_params = self.request.query_params
         # Filter domain (administrative_entity) to permit sites to filter on their own domain (e.g.: sports, culture)
-        domain = None
+        domains = None
 
         if "domain" in query_params:
-            domain = query_params["domain"]
-
-            # domain is a number
-            if domain.isdigit():
-                entity = AdministrativeEntity.objects.filter(
-                    id=domain
-                ).first()  # get can return an error
-            else:  # domain is a text
-                entity = AdministrativeEntity.objects.filter(
-                    tags__name=domain
-                ).first()  # get can return an error
+            domains = query_params["domain"].split(",")
+            entities = AdministrativeEntity.objects.filter(tags__name__in=domains)
 
             # To validate a request and show it in agenda, an user need to be pilot of his own entity and validator for other entities.
             # Retrieve pilots of entity
             pilot_of_entity = User.objects.filter(
-                groups__permit_department__administrative_entity=entity,
+                groups__permit_department__administrative_entity__in=entities,
                 groups__permit_department__is_backoffice=True,
             ).values("id")
 
             # Check agenda submissions is validated by any user on the pilot group of it's own entity
             submissions = submissions.filter(
-                Q(administrative_entity=entity)
+                Q(administrative_entity__in=entities)
                 | Q(validations__validated_by__in=pilot_of_entity)
             )
 
@@ -648,8 +639,15 @@ class AgendaViewSet(viewsets.ReadOnlyModelViewSet):
                 Q(selected_forms__field_values__value__val__contains=query)
                 | Q(selected_forms__field_values__value__val__icontains=query)
             )
+
+        # There's no filters available if there's multiple domains
+        if domains and len(domains) > 1:
+            return submissions
+        elif domains:
+            domains = domains[0]
+
         # List every available filter
-        available_filters = serializers.get_available_filters_for_agenda_as_qs(domain)
+        available_filters = serializers.get_available_filters_for_agenda_as_qs(domains)
 
         if not available_filters:
             return submissions

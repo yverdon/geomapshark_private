@@ -1,4 +1,4 @@
-FROM qgis/qgis:final-3_24_3
+FROM qgis/qgis:release-3_34
 
 # ADD requirements.txt requirements.txt
 # RUN pip install -r requirements.txt

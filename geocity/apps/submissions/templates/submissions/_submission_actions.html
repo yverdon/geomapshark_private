@@ -53,18 +53,20 @@
             </li>
           {% endif %}
           {% if not submission.is_classified %}
-            {% if forms.poke or can_classify %}
-              <li class="nav-item">
-                <a class="btn btn-primary btn-action nav-link{% if active_form == "poke" %} active{% endif %}"
-                   id="classify-tab"
-                   data-toggle="tab"
-                   href="#classify"
-                   role="tab"
-                   aria-controls="classify"
-                   aria-selected="{% if active_form == "poke" %}true{% else %}false{% endif %}">
-                  {% translate "Classement" %}
-                </a>
-              </li>
+            {% if classify_enabled %}
+              {% if forms.poke or can_classify %}
+                <li class="nav-item">
+                  <a class="btn btn-primary btn-action nav-link{% if active_form == "poke" %} active{% endif %}"
+                    id="classify-tab"
+                    data-toggle="tab"
+                    href="#classify"
+                    role="tab"
+                    aria-controls="classify"
+                    aria-selected="{% if active_form == "poke" %}true{% else %}false{% endif %}">
+                    {% translate "Classement" %}
+                  </a>
+                </li>
+              {% endif %}
             {% endif %}
           {% endif %}
           {% if forms.prolong and prolongation_enabled %}

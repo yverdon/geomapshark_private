@@ -78,4 +78,9 @@ urlpatterns += [
         views.administrative_entity_file_download,
         name="administrative_entity_file_download",
     ),
+    path(
+        "custom-site-image/<path:path>",
+        views.site_profile_custom_image,
+        name="site_profile_custom_image",
+    ),
 ]

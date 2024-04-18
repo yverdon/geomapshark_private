@@ -725,7 +725,7 @@ Après : Excellent projet qui bénéficiera à la communauté."""
         application_description_css = """
         <style>
             .login_container {
-                width: 100vw;
+                width: 70vw;
                 position: relative;
                 display: flex;
                 left: calc(-18vw + 50%);

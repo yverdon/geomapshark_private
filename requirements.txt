@@ -29,7 +29,7 @@ cryptography==42.0.5
     #   pyjwt
 defusedxml==0.7.1
     # via python3-openid
-django==4.2.10
+django==4.2.11
     # via
     #   -r requirements.in
     #   django-admin-sortable2
@@ -171,13 +171,13 @@ pdf2image==1.17.0
     # via -r requirements.in
 phonenumbers==8.13.31
     # via django-two-factor-auth
-pillow==10.2.0
+pillow==10.3.0
     # via
     #   -r requirements.in
     #   django-ckeditor-5
     #   django-simple-captcha
     #   pdf2image
-postfinancecheckout==4.2.0
+postfinancecheckout==5.1.0
     # via -r requirements.in
 psycopg2-binary==2.9.9
     # via -r requirements.in

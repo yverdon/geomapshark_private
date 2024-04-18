@@ -18,7 +18,7 @@ from django.utils.translation import gettext_lazy as _
 from simple_history.models import HistoricalRecords
 from taggit.managers import TaggableManager
 
-from .fields import AdministrativeEntityFileField
+from .fields import AdministrativeEntityFileField, CustomLoginImageFileField
 
 AGENDA_PUBLIC_TYPE_CHOICES = (
     (
@@ -116,10 +116,10 @@ class TemplateCustomization(models.Model):
     application_description = models.TextField(
         _("Description"), max_length=2048, blank=True
     )
-    background_image = models.ImageField(
+    background_image = CustomLoginImageFileField(
         _("Image de fond"),
         blank=True,
-        upload_to="background_images/",
+        upload_to="site_profile_custom_image/",
         validators=[
             FileExtensionValidator(allowed_extensions=["svg", "png", "jpg", "jpeg"])
         ],

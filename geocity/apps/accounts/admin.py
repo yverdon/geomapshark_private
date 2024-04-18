@@ -502,7 +502,8 @@ class GroupAdminForm(forms.ModelForm):
 
 class UserInline(admin.TabularInline):
     model = Group.user_set.through
-    can_delete = True
+    readonly_fields = ("user",)
+    can_delete = False
     extra = 0
     verbose_name = _("Utilisateur membre du groupe")
     verbose_name_plural = _("Utilisateurs membres du groupe")
@@ -514,6 +515,12 @@ class UserInline(admin.TabularInline):
             )
 
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 class GroupAdmin(BaseGroupAdmin):
