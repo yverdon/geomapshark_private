@@ -951,33 +951,25 @@ def get_agenda_form_fields(value, detailed, available_filters):
     return result
 
 
-def get_available_filters_for_agenda_as_qs(domain):
+def get_available_filters_for_agenda_as_qs(domains):
     """
     Returns a list of filters available for a specific entity.
     The order is important, agenda-embed has no logic, everything is set here
     """
 
-    if not domain:
+    if not domains or len(domains) > 1:
         return None
-
-    if domain.isdigit():
-        entity = (
-            AdministrativeEntity.objects.filter(
-                id=domain,
-                forms__agenda_visible=True,
-            )
-            .distinct()
-            .first()
-        )  # get can return an error
     else:
-        entity = (
-            AdministrativeEntity.objects.filter(
-                tags__name=domain,
-                forms__agenda_visible=True,
-            )
-            .distinct()
-            .first()
-        )  # get can return an error
+        domain = domains[0]
+
+    entity = (
+        AdministrativeEntity.objects.filter(
+            tags__name=domain,
+            forms__agenda_visible=True,
+        )
+        .distinct()
+        .first()
+    )  # get can return an error
 
     available_filters = Field.objects.filter(forms__administrative_entities=entity)
 
@@ -992,25 +984,28 @@ def get_available_filters_for_agenda_as_qs(domain):
     return available_filters
 
 
-def get_available_filters_for_agenda_as_json(domain):
+def get_available_filters_for_agenda_as_json(domains):
     """
     Returns the list of filters for api
     """
-    available_filters = get_available_filters_for_agenda_as_qs(domain)
+    available_filters = get_available_filters_for_agenda_as_qs(domains)
     agenda_filters = []
 
-    # Domain filter available for simple and detailed agenda
-    domain_filter = {
-        "label": "Choix de l'agenda",
-        "slug": "domain",
-    }
-    entities = AdministrativeEntity.objects.filter(
-        forms__agenda_visible=True, forms__is_public=True
-    )
-    domain_filter["options"] = [
-        {"id": entity.id, "label": entity.agenda_name} for entity in entities
-    ]
-    agenda_filters.append(domain_filter)
+    # Category filter available for simple and detailed agenda. Example : Sport, Culture, Économie, etc...
+    if domains and len(domains) > 1:
+        print("OUI")
+        print(len(domains))
+        category_filter = {
+            "label": "Catégorie",
+            "slug": "category",
+        }
+        entities = AdministrativeEntity.objects.filter(
+            forms__agenda_visible=True, forms__is_public=True, tags__name__in=domains
+        )
+        category_filter["options"] = [
+            {"id": entity.id, "label": entity.agenda_name} for entity in entities
+        ]
+        agenda_filters.append(category_filter)
 
     if available_filters:
         for available_filter in available_filters:
