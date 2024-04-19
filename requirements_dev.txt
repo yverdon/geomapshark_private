@@ -211,6 +211,8 @@ idna==3.7
     # via
     #   -r requirements.txt
     #   requests
+inflection==0.5.1
+    # via -r requirements.txt
 ipdb==0.13.13
     # via -r requirements_dev.in
 ipython==8.23.0
