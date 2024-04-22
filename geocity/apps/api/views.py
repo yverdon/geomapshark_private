@@ -546,6 +546,23 @@ def image_thumbor_display(request, submission_id, image_name):
     return thumbor_response
 
 
+def get_agenda_submissions(entities, submissions):
+    # To validate a request and show it in agenda, an user need to be pilot of his own entity and validator for other entities.
+    # Retrieve pilots of entity
+    pilot_of_entity = User.objects.filter(
+        groups__permit_department__administrative_entity__in=entities,
+        groups__permit_department__is_backoffice=True,
+    ).values("id")
+
+    # Check agenda submissions is validated by any user on the pilot group of it's own entity
+    submissions = submissions.filter(
+        Q(administrative_entity__in=entities)
+        | Q(validations__validated_by__in=pilot_of_entity)
+    )
+
+    return submissions
+
+
 class AgendaViewSet(viewsets.ReadOnlyModelViewSet):
     """
     This api provides :
@@ -554,7 +571,7 @@ class AgendaViewSet(viewsets.ReadOnlyModelViewSet):
     Submissions are filtered by date
     Images are provided through thumbor https://thumbor.readthedocs.io/en/latest/imaging.html
     Arguments that can be supplied in the url :
-    - ?domain can be given through the component in html, it corresponds to the entity tags (mots-clés)
+    - ?domain can be given through the component in html, can be a comma separated list, it corresponds to the entity tags (mots-clés)
     - ?starts_at
     - ?ends_at
     - ?width
@@ -577,7 +594,7 @@ class AgendaViewSet(viewsets.ReadOnlyModelViewSet):
         This view has a detailed result and a simple result
         The detailed result is built with AgendaResultsSetPagination,
         this is required to be able to make pagination and return features and filters
-        The simple result just return informations for une submission
+        The simple result just return informations for une submission and lists available domains
         The order is important, agenda-embed has no logic, everything is set here
         """
         submissions = (
@@ -594,26 +611,18 @@ class AgendaViewSet(viewsets.ReadOnlyModelViewSet):
         # List params given by the request as query_params
         query_params = self.request.query_params
         # Filter domain (administrative_entity) to permit sites to filter on their own domain (e.g.: sports, culture)
-        domain = None
+        domains = None
 
-        if "domain" in query_params:
-            domain = query_params["domain"]
-            entity = AdministrativeEntity.objects.filter(
-                tags__name=domain
-            ).first()  # get can return an error
+        if "domain_filter" in query_params:
+            domain_filter = query_params.getlist("domain_filter")
+            entities = AdministrativeEntity.objects.filter(id__in=domain_filter)
+            submissions = get_agenda_submissions(entities, submissions)
 
-            # To validate a request and show it in agenda, an user need to be pilot of his own entity and validator for other entities.
-            # Retrieve pilots of entity
-            pilot_of_entity = User.objects.filter(
-                groups__permit_department__administrative_entity=entity,
-                groups__permit_department__is_backoffice=True,
-            ).values("id")
-
-            # Check agenda submissions is validated by any user on the pilot group of it's own entity
-            submissions = submissions.filter(
-                Q(administrative_entity=entity)
-                | Q(validations__validated_by__in=pilot_of_entity)
-            )
+        elif "domain" in query_params:
+            domains = query_params["domain"]
+            domains = domains.split(",") if domains else None
+            entities = AdministrativeEntity.objects.filter(tags__name__in=domains)
+            submissions = get_agenda_submissions(entities, submissions)
 
         if "starts_at" in query_params:
             starts_at = datetime.datetime.strptime(
@@ -641,8 +650,9 @@ class AgendaViewSet(viewsets.ReadOnlyModelViewSet):
                 Q(selected_forms__field_values__value__val__contains=query)
                 | Q(selected_forms__field_values__value__val__icontains=query)
             )
+
         # List every available filter
-        available_filters = serializers.get_available_filters_for_agenda_as_qs(domain)
+        available_filters = serializers.get_available_filters_for_agenda_as_qs(domains)
 
         if not available_filters:
             return submissions

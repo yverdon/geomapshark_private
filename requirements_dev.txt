@@ -4,7 +4,7 @@
 #
 #    pip-compile requirements_dev.in
 #
-asgiref==3.7.2
+asgiref==3.8.1
     # via
     #   -r requirements.txt
     #   django
@@ -16,7 +16,7 @@ beautifulsoup4==4.12.3
     # via
     #   -r requirements.txt
     #   django-bootstrap4
-build==1.0.3
+build==1.2.1
     # via pip-tools
 certifi==2024.2.2
     # via
@@ -35,7 +35,7 @@ charset-normalizer==3.3.2
     #   requests
 click==8.1.7
     # via pip-tools
-coverage==7.4.3
+coverage==7.4.4
     # via -r requirements_dev.in
 cryptography==42.0.5
     # via
@@ -56,7 +56,7 @@ diffimg==0.3.0
     # via -r requirements_dev.in
 distlib==0.3.8
     # via virtualenv
-django==4.2.10
+django==4.2.11
     # via
     #   -r requirements.txt
     #   django-admin-sortable2
@@ -96,7 +96,7 @@ django-appconf==1.0.6
     # via
     #   -r requirements.txt
     #   django-select2
-django-axes[ipware]==6.3.0
+django-axes[ipware]==6.4.0
     # via -r requirements.txt
 django-bootstrap-datepicker-plus==4.0.0
     # via -r requirements.txt
@@ -116,25 +116,25 @@ django-debug-toolbar==4.3.0
     # via -r requirements_dev.in
 django-extensions==3.2.3
     # via -r requirements_dev.in
-django-filter==23.5
+django-filter==24.2
     # via -r requirements.txt
 django-formtools==2.5.1
     # via
     #   -r requirements.txt
     #   django-two-factor-auth
-django-ipware==6.0.4
+django-ipware==6.0.5
     # via
     #   -r requirements.txt
     #   django-axes
-django-jazzmin==2.6.0
+django-jazzmin==2.6.1
     # via -r requirements.txt
 django-jsoneditor==0.2.4
     # via -r requirements.txt
-django-jsonform==2.21.5
+django-jsonform==2.22.0
     # via -r requirements.txt
 django-oauth-toolkit==2.3.0
     # via -r requirements.txt
-django-otp==1.3.0
+django-otp==1.5.0
     # via
     #   -r requirements.txt
     #   django-two-factor-auth
@@ -142,7 +142,7 @@ django-phonenumber-field==6.4.0
     # via
     #   -r requirements.txt
     #   django-two-factor-auth
-django-picklefield==3.1
+django-picklefield==3.2
     # via
     #   -r requirements.txt
     #   django-constance
@@ -170,7 +170,7 @@ django-taggit==5.0.1
     # via -r requirements.txt
 django-two-factor-auth[phonenumbers]==1.14.0
     # via -r requirements.txt
-djangorestframework==3.14.0
+djangorestframework==3.15.1
     # via
     #   -r requirements.txt
     #   django-rest-knox
@@ -189,11 +189,11 @@ executing==2.0.1
     # via stack-data
 factory-boy==3.3.0
     # via -r requirements_dev.in
-faker==23.3.0
+faker==24.11.0
     # via
     #   -r requirements_dev.in
     #   factory-boy
-filelock==3.13.1
+filelock==3.13.4
     # via virtualenv
 filetype==1.2.0
     # via -r requirements.txt
@@ -201,19 +201,21 @@ freezegun==1.4.0
     # via -r requirements_dev.in
 gdal==3.6.3
     # via -r requirements.txt
-gunicorn==21.2.0
+gunicorn==22.0.0
     # via -r requirements.txt
 html5lib==1.1
     # via -r requirements.txt
 identify==2.5.35
     # via pre-commit
-idna==3.6
+idna==3.7
     # via
     #   -r requirements.txt
     #   requests
+inflection==0.5.1
+    # via -r requirements.txt
 ipdb==0.13.13
     # via -r requirements_dev.in
-ipython==8.22.1
+ipython==8.23.0
     # via ipdb
 jdcal==1.4.1
     # via -r requirements.txt
@@ -221,7 +223,7 @@ jedi==0.19.1
     # via ipython
 jinja2==3.1.3
     # via -r requirements.txt
-jwcrypto==1.5.4
+jwcrypto==1.5.6
     # via
     #   -r requirements.txt
     #   django-oauth-toolkit
@@ -229,7 +231,7 @@ markupsafe==2.1.5
     # via
     #   -r requirements.txt
     #   jinja2
-matplotlib-inline==0.1.6
+matplotlib-inline==0.1.7
     # via ipython
 nodeenv==1.8.0
     # via pre-commit
@@ -246,16 +248,16 @@ openpyxl==3.1.2
     # via
     #   -r requirements.txt
     #   tablib
-packaging==23.2
+packaging==24.0
     # via
     #   -r requirements.txt
     #   build
     #   django-jsoneditor
     #   docker
     #   gunicorn
-pandas==2.2.1
+pandas==2.2.2
     # via -r requirements.txt
-parso==0.8.3
+parso==0.8.4
     # via jedi
 pdf2image==1.17.0
     # via
@@ -263,24 +265,24 @@ pdf2image==1.17.0
     #   -r requirements_dev.in
 pexpect==4.9.0
     # via ipython
-phonenumbers==8.13.31
+phonenumbers==8.13.34
     # via
     #   -r requirements.txt
     #   django-two-factor-auth
-pillow==10.2.0
+pillow==10.3.0
     # via
     #   -r requirements.txt
     #   diffimg
     #   django-ckeditor-5
     #   django-simple-captcha
     #   pdf2image
-pip-tools==7.4.0
+pip-tools==7.4.1
     # via -r requirements_dev.in
 platformdirs==4.2.0
     # via virtualenv
-postfinancecheckout==4.2.0
+postfinancecheckout==5.1.0
     # via -r requirements.txt
-pre-commit==3.6.2
+pre-commit==3.7.0
     # via -r requirements_dev.in
 prompt-toolkit==3.0.43
     # via ipython
@@ -290,7 +292,7 @@ ptyprocess==0.7.0
     # via pexpect
 pure-eval==0.2.2
     # via stack-data
-pycparser==2.21
+pycparser==2.22
     # via
     #   -r requirements.txt
     #   cffi
@@ -308,14 +310,14 @@ pyproject-hooks==1.0.0
     # via
     #   build
     #   pip-tools
-python-dateutil==2.8.2
+python-dateutil==2.9.0.post0
     # via
     #   -r requirements.txt
     #   faker
     #   freezegun
     #   pandas
     #   postfinancecheckout
-python-ipware==2.0.1
+python-ipware==2.0.3
     # via
     #   -r requirements.txt
     #   django-ipware
@@ -326,7 +328,6 @@ python3-openid==3.2.0
 pytz==2024.1
     # via
     #   -r requirements.txt
-    #   djangorestframework
     #   pandas
 pyyaml==6.0.1
     # via
@@ -343,7 +344,7 @@ requests==2.31.0
     #   django-oauth-toolkit
     #   docker
     #   requests-oauthlib
-requests-oauthlib==1.3.1
+requests-oauthlib==2.0.0
     # via
     #   -r requirements.txt
     #   django-allauth
@@ -358,14 +359,14 @@ soupsieve==2.5
     # via
     #   -r requirements.txt
     #   beautifulsoup4
-sqlparse==0.4.4
+sqlparse==0.5.0
     # via
     #   -r requirements.txt
     #   django
     #   django-debug-toolbar
 stack-data==0.6.3
     # via ipython
-tablib[xlsx]==3.5.0
+tablib[xlsx]==3.6.1
     # via -r requirements.txt
 tomli==2.0.1
     # via
@@ -373,14 +374,15 @@ tomli==2.0.1
     #   ipdb
     #   pip-tools
     #   pyproject-hooks
-traitlets==5.14.1
+traitlets==5.14.2
     # via
     #   ipython
     #   matplotlib-inline
-typing-extensions==4.10.0
+typing-extensions==4.11.0
     # via
     #   -r requirements.txt
     #   asgiref
+    #   ipython
     #   jwcrypto
     #   qrcode
 tzdata==2024.1
@@ -397,7 +399,7 @@ urllib3==2.2.1
     #   docker
     #   postfinancecheckout
     #   requests
-virtualenv==20.25.1
+virtualenv==20.25.3
     # via pre-commit
 wcwidth==0.2.13
     # via prompt-toolkit
@@ -405,7 +407,7 @@ webencodings==0.5.1
     # via
     #   -r requirements.txt
     #   html5lib
-wheel==0.42.0
+wheel==0.43.0
     # via pip-tools
 whitenoise==6.6.0
     # via -r requirements.txt

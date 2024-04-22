@@ -44,11 +44,11 @@
           </dl>
         </div>
 
-        {% if amend_custom_fields %}
+        {% if display_amend_properties %}
           <div class="container">
             <h5>{% translate "Informations du service responsable" %}</h5>
             {% for field_value in amend_custom_fields %}
-              {% if field_value.field.is_visible_by_author or field_value.field.is_visible_by_validators and is_validator %}
+              {% if field_value.field.is_visible_by_author and user_is_author_of_submission or field_value.field.is_visible_by_validators and is_validator %}
                 <dl class="properties-list">
                   <dt class="amend-property">{{ field_value.field }}</dt>
                   <dd>{{ field_value.value|linebreaksbr }}</dd>

@@ -290,6 +290,19 @@ class SubmissionDetailView(View):
             fees_module_enabled=True
         ).exists()
 
+        statuses = list(
+            models.SubmissionWorkflowStatus.objects.get_statuses_for_administrative_entity(
+                self.submission.administrative_entity
+            ).values_list(
+                "status", flat=True
+            )
+        )
+
+        classify_enabled = (
+            models.Submission.STATUS_APPROVED in statuses
+            and models.Submission.STATUS_REJECTED in statuses
+        )
+
         return {
             **kwargs,
             **{
@@ -304,6 +317,7 @@ class SubmissionDetailView(View):
                 "can_classify": permissions.can_classify_submission(
                     self.request.user, self.submission
                 ),
+                "classify_enabled": classify_enabled,
                 "has_permission_to_classify_submission": permissions.has_permission_to_classify_submission(
                     self.request.user, self.submission
                 ),
@@ -1119,6 +1133,7 @@ def manage_steps_anonymous_form(form_category, entity, request, anonymous_forms)
     # this combination must be set on submission object
     if len(anonymous_forms) == 1:
         submission.forms.set(anonymous_forms)
+        quick_access_slug = anonymous_forms[0].quick_access_slug
 
     steps = get_anonymous_steps(
         form_category=form_category,
@@ -1126,10 +1141,25 @@ def manage_steps_anonymous_form(form_category, entity, request, anonymous_forms)
         submission=submission,
         current_site=get_current_site(request),
     )
-
     for step_type, step in steps.items():
         if step and step.enabled and not step.completed:
             return redirect(step.url)
+
+    # If a form was filled but never ended by the same user, on the same browser, the temp user must be cleared and the process restarted from the beginning
+    if request.user.userprofile.is_temporary:
+        temp_user = request.user
+        logout(request)
+        temp_user.delete()
+        # delete draft submission
+        submission.delete()
+
+        if quick_access_slug:
+            anonymous_form_url = request.build_absolute_uri(
+                f'{reverse("submissions:anonymous_submission")}?form={quick_access_slug}'
+            )
+            return redirect(anonymous_form_url)
+        else:
+            raise Http404
 
 
 def get_anonymous_submission_by_tags(request, entityfilter, typefilter):
@@ -1874,13 +1904,13 @@ class SubmissionList(PandasExportMixin, SingleTableMixin, FilterView):
 
     def get_table_class(self):
         form_filter = self._get_form_filter()
+        if form_filter:
+            extra_columns = self._get_extra_column_specs(form_filter)
+            extra_column_names = tuple([col_name for col_name, __ in extra_columns])
+        else:
+            extra_column_names = tuple()
 
         if self.is_department_user():
-            if form_filter:
-                extra_columns = self._get_extra_column_specs(form_filter)
-                extra_column_names = tuple([col_name for col_name, __ in extra_columns])
-            else:
-                extra_column_names = tuple()
 
             if config.ENABLE_GEOCALENDAR:
                 extra_column_names += tuple(
@@ -1899,6 +1929,7 @@ class SubmissionList(PandasExportMixin, SingleTableMixin, FilterView):
                 if self.is_exporting()
                 else tables.OwnSubmissionsHTMLTable
             )
+            table_class = get_custom_dynamic_table(table_class, extra_column_names)
         return table_class
 
     def get_table_kwargs(self):

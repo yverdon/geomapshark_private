@@ -6,7 +6,7 @@
 #
 brotli==1.1.0
     # via fonttools
-certifi==2023.11.17
+certifi==2024.2.2
     # via requests
 cffi==1.16.0
     # via weasyprint
@@ -14,19 +14,17 @@ charset-normalizer==3.3.2
     # via requests
 cssselect2==0.7.0
     # via weasyprint
-fonttools[woff]==4.47.2
-    # via
-    #   fonttools
-    #   weasyprint
+fonttools[woff]==4.51.0
+    # via weasyprint
 html5lib==1.1
     # via weasyprint
-idna==3.6
+idna==3.7
     # via requests
-pillow==10.2.0
+pillow==10.3.0
     # via weasyprint
-pycparser==2.21
+pycparser==2.22
     # via cffi
-pydyf==0.8.0
+pydyf==0.9.0
     # via weasyprint
 pyphen==0.14.0
     # via weasyprint
@@ -38,9 +36,9 @@ tinycss2==1.2.1
     # via
     #   cssselect2
     #   weasyprint
-urllib3==2.1.0
+urllib3==2.2.1
     # via requests
-weasyprint==60.2
+weasyprint==61.2
     # via -r requirements.in
 webencodings==0.5.1
     # via

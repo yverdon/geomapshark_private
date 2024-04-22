@@ -5,7 +5,6 @@ from adminsortable2.admin import SortableAdminMixin, SortableInlineAdminMixin
 from constance import config
 from django import forms
 from django.contrib import admin
-from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
@@ -15,6 +14,7 @@ from geocity.apps.accounts.admin import (
     filter_for_user,
 )
 from geocity.apps.accounts.models import PUBLIC_TYPE_CHOICES, AdministrativeEntity
+from geocity.apps.submissions.models import Submission, SubmissionWorkflowStatus
 
 from . import models
 
@@ -164,6 +164,16 @@ class FormAdminForm(forms.ModelForm):
             self.instance.has_geometry_polygon = False
 
             self.instance.can_have_multiple_ranges = False
+
+        """
+        Set required status when public inquiry module is enabled
+        """
+
+        if self.cleaned_data["publication_enabled"]:
+            SubmissionWorkflowStatus.objects.update_or_create(
+                status=Submission.STATUS_INQUIRY_IN_PROGRESS,
+                administrative_entity=self.cleaned_data["administrative_entities"][0],
+            )
 
         return super().save(*args, **kwargs)
 
@@ -490,22 +500,7 @@ class FieldAdminForm(forms.ModelForm):
         ]
 
     def get_form_list(self):
-        forms_fields = self.instance.form_fields.all().order_by(
-            "form__name", "form__id"
-        )
-        if forms_fields:
-            list_content = []
-            for ff in forms_fields:
-                url = reverse(
-                    "admin:forms_form_change", kwargs={"object_id": ff.form.id}
-                )
-                list_content.append(
-                    format_html("<li><a href='{}'>{}</a></li>", url, ff.form.name)
-                )
-            list_html = "\n".join(list_content)
-            return f"<ul>{list_html}</ul>"
-        else:
-            return "—"
+        return self.instance.get_form_list()
 
     def clean_file_download(self):
         if self.cleaned_data["input_type"] == "file_download":
@@ -658,6 +653,7 @@ class FieldAdmin(IntegratorFilterMixin, admin.ModelAdmin):
         "input_type",
         "placeholder",
         "help_text",
+        "form_list",
     ]
     list_filter = [
         "name",
@@ -705,6 +701,11 @@ class FieldAdmin(IntegratorFilterMixin, admin.ModelAdmin):
             },
         ),
     )
+
+    def form_list(self, obj):
+        return obj.get_form_list()
+
+    form_list.short_description = _("Formulaires")
 
     def sortable_str(self, obj):
         sortable_str = (

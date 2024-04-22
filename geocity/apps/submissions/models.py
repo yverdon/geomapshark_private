@@ -7,6 +7,7 @@ import tempfile
 import urllib.parse
 import uuid
 import zipfile
+from collections import OrderedDict
 from datetime import date, datetime, timedelta
 
 import pandas
@@ -688,7 +689,7 @@ class Submission(models.Model):
     def to_csv(self):
         from ..api.serializers import SubmissionPrintSerializer
 
-        ordered_dict = SubmissionPrintSerializer(self).data
+        ordered_dict = OrderedDict(SubmissionPrintSerializer(self).data)
         ordered_dict.move_to_end("geometry")
         data_dict = dict(ordered_dict)
         data_str = json.dumps(data_dict)
@@ -1926,7 +1927,7 @@ class SubmissionAmendField(models.Model):
     )
     is_mandatory = models.BooleanField(_("obligatoire"), default=False)
     is_visible_by_author = models.BooleanField(
-        _("Visible par l'auteur de la demande"), default=True
+        _("Visible par l'auteur de la demande"), default=False
     )
     is_visible_by_validators = models.BooleanField(
         _("Visible par les validateurs"), default=False

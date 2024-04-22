@@ -160,6 +160,7 @@ Following variable setup in your .env file will setup the development environmen
 
 ```ini
 PRIVATE_DOCUMENTS_DIR=C:\some\directory\for\mounting\geocity\private_documents
+PUBLIC_DOCUMENTS_DIR=C:\some\directory\for\mounting\geocity\public_documents
 ARCHIVE_DIR=C:\some\directory\for\mounting\geocity\archive
 DEFAULT_SITE=localhost
 ```
