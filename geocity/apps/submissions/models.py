@@ -690,7 +690,6 @@ class Submission(models.Model):
         from ..api.serializers import SubmissionPrintSerializer
 
         ordered_dict = OrderedDict(SubmissionPrintSerializer(self).data)
-        ordered_dict = SubmissionPrintSerializer(self).data
         ordered_dict.move_to_end("geometry")
         data_dict = dict(ordered_dict)
         data_str = json.dumps(data_dict)
