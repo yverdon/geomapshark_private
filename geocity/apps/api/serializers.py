@@ -951,14 +951,16 @@ def get_agenda_form_fields(value, detailed, available_filters):
     return result
 
 
-def get_available_filters_for_agenda_as_qs(domain):
+def get_available_filters_for_agenda_as_qs(domains):
     """
     Returns a list of filters available for a specific entity.
     The order is important, agenda-embed has no logic, everything is set here
     """
 
-    if not domain:
+    if not domains or len(domains) > 1:
         return None
+    else:
+        domain = domains[0]
 
     entity = (
         AdministrativeEntity.objects.filter(
@@ -982,30 +984,50 @@ def get_available_filters_for_agenda_as_qs(domain):
     return available_filters
 
 
-def get_available_filters_for_agenda_as_json(domain):
+def get_available_filters_for_agenda_as_json(domains):
     """
     Returns the list of filters for api
     """
-    available_filters = get_available_filters_for_agenda_as_qs(domain)
-
-    if not available_filters:
-        return None
-
+    available_filters = get_available_filters_for_agenda_as_qs(domains)
     agenda_filters = []
-    for available_filter in available_filters:
-        actual_filter = {
-            "label": available_filter.name,
-            "slug": available_filter.api_name,
+
+    # Category filter available for simple and detailed agenda. Example : Sport, Culture, Économie, etc...
+    if domains and len(domains) > 1:
+        domain_filter = {
+            "label": "Catégorie",
+            "slug": "domain_filter",
         }
-        actual_filter["options"] = [
+        entities = AdministrativeEntity.objects.filter(
+            forms__agenda_visible=True, forms__is_public=True, tags__name__in=domains
+        )
+        domain_filter["options"] = [
             {
-                "id": key,
-                "label": choice.strip(),
+                "id": entity.id,
+                "label": entity.agenda_name
+                if entity.agenda_name
+                else "Valeur non définie",
             }
-            for key, choice in enumerate(available_filter.choices.strip().splitlines())
+            for entity in entities
         ]
-        agenda_filters.append(actual_filter)
-    return agenda_filters
+        agenda_filters.append(domain_filter)
+
+    if available_filters:
+        for available_filter in available_filters:
+            actual_filter = {
+                "label": available_filter.name,
+                "slug": available_filter.api_name,
+            }
+            actual_filter["options"] = [
+                {
+                    "id": key,
+                    "label": choice.strip(),
+                }
+                for key, choice in enumerate(
+                    available_filter.choices.strip().splitlines()
+                )
+            ]
+            agenda_filters.append(actual_filter)
+    return agenda_filters if agenda_filters != [] else None
 
 
 class AgendaSerializer(serializers.Serializer):
