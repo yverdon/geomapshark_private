@@ -7,6 +7,7 @@ import tempfile
 import urllib.parse
 import uuid
 import zipfile
+from collections import OrderedDict
 from datetime import date, datetime, timedelta
 
 import pandas
@@ -688,6 +689,7 @@ class Submission(models.Model):
     def to_csv(self):
         from ..api.serializers import SubmissionPrintSerializer
 
+        ordered_dict = OrderedDict(SubmissionPrintSerializer(self).data)
         ordered_dict = SubmissionPrintSerializer(self).data
         ordered_dict.move_to_end("geometry")
         data_dict = dict(ordered_dict)
