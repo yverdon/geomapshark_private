@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
             name="agenda_name",
             field=models.CharField(
                 blank=True,
-                help_text="Nom utilisé afin de filtrer sur l'agenda global",
+                help_text="Nom visible dans le filtre de l'agenda",
                 max_length=128,
                 verbose_name="Nom dans l'api agenda",
             ),

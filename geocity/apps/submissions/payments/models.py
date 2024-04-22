@@ -161,7 +161,7 @@ class ServiceFeeType(models.Model):
         help_text=_("Le tarif forfaitaire de cette prestation."),
     )
     fix_price_editable = models.BooleanField(
-        verbose_name=_("Montant à saisir manuelllement"),
+        verbose_name=_("Montant à saisir manuellement"),
         help_text=_(
             "Exemple: montant demandant un calcul spécifique à réaliser en dehors de l'application"
         ),

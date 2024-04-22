@@ -259,7 +259,7 @@ class AdministrativeEntity(models.Model):
     name = models.CharField(_("name"), max_length=128)
     agenda_name = models.CharField(
         _("Nom dans l'api agenda"),
-        help_text=_("Nom utilisé afin de filtrer sur l'agenda global"),
+        help_text=_("Nom visible dans le filtre de l'agenda"),
         max_length=128,
         blank=True,
     )
