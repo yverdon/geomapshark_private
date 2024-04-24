@@ -406,6 +406,12 @@ class SubmissionDetailView(View):
             models.ACTION_COMPLEMENTARY_DOCUMENTS: self.get_complementary_documents_formset,
         }
 
+        # Show complementary documents only for pilot
+        if not permissions.is_backoffice_of_submission(
+            self.request.user, self.submission
+        ):
+            return None
+
         return (
             actions_formset[action](data=data, files=files)
             if action in actions_formset
