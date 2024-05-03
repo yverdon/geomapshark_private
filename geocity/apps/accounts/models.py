@@ -387,14 +387,6 @@ class AdministrativeEntity(models.Model):
         verbose_name_plural = _(
             "1.1 Configuration des entités administratives (commune, organisation)"
         )
-        # Make agenda_domain unique if not null
-        constraints = [
-            UniqueConstraint(
-                fields=["agenda_domain"],
-                condition=models.Q(agenda_domain__isnull=False),
-                name="unique_non_empty_agenda_domain",
-            )
-        ]
 
     def __str__(self):
         return self.name
@@ -457,6 +449,16 @@ class AdministrativeEntity(models.Model):
                     )
                 }
             )
+
+        if self.agenda_domain:
+            if (
+                AdministrativeEntity.objects.exclude(pk=self.pk)
+                .filter(agenda_domain=self.agenda_domain)
+                .exists()
+            ):
+                raise ValidationError(
+                    {"agenda_domain": _("Le domaine de l'agenda doit être unique.")}
+                )
 
         if (
             not self.is_single_form_submissions
