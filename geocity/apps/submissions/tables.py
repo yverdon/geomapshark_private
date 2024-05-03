@@ -1,5 +1,6 @@
 import collections
 import json
+from collections import OrderedDict
 from datetime import datetime, timedelta
 from io import BytesIO as IO
 
@@ -510,7 +511,7 @@ class PandasExportMixin(ExportMixin):
             # Handle null selected_forms (due to old bug YC-1093)
             if list_selected_forms:
                 sheet_name = "_".join(map(str, list_selected_forms))
-                ordered_dict = SubmissionPrintSerializer(submission).data
+                ordered_dict = OrderedDict(SubmissionPrintSerializer(submission).data)
                 ordered_dict.move_to_end("geometry")
                 data_dict = dict(ordered_dict)
                 data_str = json.dumps(data_dict)
