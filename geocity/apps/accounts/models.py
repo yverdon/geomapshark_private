@@ -264,7 +264,6 @@ class AdministrativeEntity(models.Model):
         ),
         max_length=128,
         blank=True,
-        unique=True,
     )
     agenda_name = models.CharField(
         _("Nom dans l'api agenda"),
@@ -388,6 +387,14 @@ class AdministrativeEntity(models.Model):
         verbose_name_plural = _(
             "1.1 Configuration des entités administratives (commune, organisation)"
         )
+        # Make agenda_domain unique if not null
+        constraints = [
+            UniqueConstraint(
+                fields=["agenda_domain"],
+                condition=models.Q(agenda_domain__isnull=False),
+                name="unique_non_empty_agenda_domain",
+            )
+        ]
 
     def __str__(self):
         return self.name
