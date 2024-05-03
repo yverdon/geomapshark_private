@@ -257,6 +257,15 @@ class AdministrativeEntityManager(models.Manager):
 
 class AdministrativeEntity(models.Model):
     name = models.CharField(_("name"), max_length=128)
+    agenda_domain = models.CharField(
+        _("Domaine de l'agenda"),
+        help_text=_(
+            "Utilisé afin de sélectionner les agendas visible dans agenda-embed"
+        ),
+        max_length=128,
+        blank=True,
+        unique=True,
+    )
     agenda_name = models.CharField(
         _("Nom dans l'api agenda"),
         help_text=_("Nom visible dans le filtre de l'agenda"),
