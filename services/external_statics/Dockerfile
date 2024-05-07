@@ -21,5 +21,5 @@ RUN cd /app/geocity-wc-map \
 # Install agenda-embed web component
 RUN mkdir /app/agenda-embed \
   && cd /app/agenda-embed \
-  && npm install @geocity/agenda-embed \
+  && npm install @geocity/agenda-embed@latest \
   && echo "static files for agenda embed imported successfully!"

@@ -2621,8 +2621,6 @@ class ConfirmTransactionCallback(View):
         transaction = get_transaction_from_id(pk)
         submission = transaction.submission_price.submission
 
-        submission.generate_and_save_pdf("confirmation", transaction)
-
         if (
             not request.user == submission.author
             or not transaction.status == transaction.STATUS_UNPAID
@@ -2631,6 +2629,7 @@ class ConfirmTransactionCallback(View):
 
         processor = get_payment_processor(submission.get_form_for_payment())
         if processor.is_transaction_authorized(transaction):
+            submission.generate_and_save_pdf("confirmation", transaction)
             transaction.set_paid()
             submission_submit_confirmed(request, submission.pk)
 
@@ -2766,8 +2765,6 @@ class ConfirmProlongationTransactionView(View):
         transaction = get_transaction_from_id(pk)
         submission = transaction.submission_price.submission
 
-        submission.generate_and_save_pdf("confirmation", transaction)
-
         if (
             not request.user == submission.author
             or not transaction.status == transaction.STATUS_UNPAID
@@ -2776,9 +2773,11 @@ class ConfirmProlongationTransactionView(View):
 
         processor = get_payment_processor(submission.get_form_for_payment())
         if processor.is_transaction_authorized(transaction):
+            submission.generate_and_save_pdf("confirmation", transaction)
             transaction.set_paid()
             submission.prolongation_date = datetime.fromtimestamp(prolongation_date)
             _set_prolongation_requested_and_notify(submission, request)
+
             return render(
                 request,
                 "submissions/submission_payment_callback_confirm.html",

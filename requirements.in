@@ -24,6 +24,7 @@ django-admin-sortable2
 django-simple-history
 djangorestframework
 djangorestframework-gis
+inflection
 django-cors-headers
 django-constance
 django-two-factor-auth[phonenumbers]==1.14.0

@@ -257,6 +257,12 @@ class AdministrativeEntityManager(models.Manager):
 
 class AdministrativeEntity(models.Model):
     name = models.CharField(_("name"), max_length=128)
+    agenda_name = models.CharField(
+        _("Nom dans l'api agenda"),
+        help_text=_("Nom visible dans le filtre de l'agenda"),
+        max_length=128,
+        blank=True,
+    )
     ofs_id = models.PositiveIntegerField(_("Numéro OFS"))
     link = models.URLField(_("Lien"), max_length=200, blank=True)
     archive_link = models.URLField(_("Archives externes"), max_length=1024, blank=True)
