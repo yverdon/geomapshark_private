@@ -65,33 +65,35 @@ Pay&eacute; le {{ transaction_data.creation_date }}</p>
             order=4,
             report=report,
             title="",
-            content="""<table border="1" cellpadding="1" cellspacing="1" style="width:100%">
-	<tbody>
-		<tr>
-			<td><strong>Libell&eacute;</strong></td>
-			<td>&nbsp;</td>
-			<td style="text-align:right"><strong>Prix CHF TTC</strong></td>
-		</tr>
-		<tr>
-			<td>
-			<p>&nbsp;</p>
+            content="""<div class="raw-html-embed">
+    <table border="1" cellpadding="1" cellspacing="1" style="width:100%">
+        <tbody>
+            <tr>
+                <td><strong>Libell&eacute;</strong></td>
+                <td>&nbsp;</td>
+                <td style="text-align:right"><strong>Prix CHF TTC</strong></td>
+            </tr>
+            <tr>
+                <td>
+                <p>&nbsp;</p>
 
-			<p>{{ transaction_data.line_text }} : {{request_data.properties.submission_price.text}}</p>
+                <p>{{ transaction_data.line_text }} : {{request_data.properties.submission_price.text}}</p>
 
-			<p>&nbsp;</p>
-			</td>
-			<td>&nbsp;</td>
-			<td style="text-align:right">{{request_data.properties.submission_price.amount}}</td>
-		</tr>
-		<tr>
-			<td><strong>Montant pay&eacute;</strong></td>
-			<td>&nbsp;</td>
-			<td style="text-align:right"><strong>{{request_data.properties.submission_price.amount}}</strong></td>
-		</tr>
-	</tbody>
-</table>
+                <p>&nbsp;</p>
+                </td>
+                <td>&nbsp;</td>
+                <td style="text-align:right">{{request_data.properties.submission_price.amount}}</td>
+            </tr>
+            <tr>
+                <td><strong>Montant pay&eacute;</strong></td>
+                <td>&nbsp;</td>
+                <td style="text-align:right"><strong>{{request_data.properties.submission_price.amount}}</strong></td>
+            </tr>
+        </tbody>
+    </table>
 
-<p>&nbsp;</p>""",
+    <p>&nbsp;</p>
+</div>""",
         )
         section_paragraph_4.save()
 
@@ -149,33 +151,35 @@ Pay&eacute; le {{ transaction_data.creation_date }}</p>
             order=4,
             report=report,
             title="",
-            content="""<table border="1" cellpadding="1" cellspacing="1" style="width:100%">
-	<tbody>
-		<tr>
-			<td><strong>Libell&eacute;</strong></td>
-			<td>&nbsp;</td>
-			<td style="text-align:right"><strong>Prix CHF TTC</strong></td>
-		</tr>
-		<tr>
-			<td>
-			<p>&nbsp;</p>
+            content="""<div class="raw-html-embed">
+    <table border="1" cellpadding="1" cellspacing="1" style="width:100%">
+        <tbody>
+            <tr>
+                <td><strong>Libell&eacute;</strong></td>
+                <td>&nbsp;</td>
+                <td style="text-align:right"><strong>Prix CHF TTC</strong></td>
+            </tr>
+            <tr>
+                <td>
+                <p>&nbsp;</p>
 
-			<p>{{ transaction_data.line_text }} : {{request_data.properties.submission_price.text}}</p>
+                <p>{{ transaction_data.line_text }} : {{request_data.properties.submission_price.text}}</p>
 
-			<p>&nbsp;</p>
-			</td>
-			<td>&nbsp;</td>
-			<td style="text-align:right">-{{request_data.properties.submission_price.amount}}</td>
-		</tr>
-		<tr>
-			<td><strong>Montant rembours&eacute;</strong></td>
-			<td>&nbsp;</td>
-			<td style="text-align:right"><strong>-{{request_data.properties.submission_price.amount}}</strong></td>
-		</tr>
-	</tbody>
-</table>
+                <p>&nbsp;</p>
+                </td>
+                <td>&nbsp;</td>
+                <td style="text-align:right">-{{request_data.properties.submission_price.amount}}</td>
+            </tr>
+            <tr>
+                <td><strong>Montant rembours&eacute;</strong></td>
+                <td>&nbsp;</td>
+                <td style="text-align:right"><strong>-{{request_data.properties.submission_price.amount}}</strong></td>
+            </tr>
+        </tbody>
+    </table>
 
-<p>&nbsp;</p>""",
+    <p>&nbsp;</p>
+</div>""",
         )
         section_paragraph_4.save()
 
