@@ -17,10 +17,10 @@ jobs:
       run: cp .env.example .env
 
     - name: Build/Pull Containers
-      run: docker-compose build
+      run: docker compose build
 
     - name: Start full stack
-      run: docker-compose up -d
+      run: docker compose up -d
 
     - name: Sanity Checks
       run: |
@@ -28,25 +28,25 @@ jobs:
         POSTGRES_OK=$(docker ps -aq --filter status="running" --filter name="geocity_postgres_1") && if [ -z "$POSTGRES_OK" ]; then exit 1; fi
 
     - name: Stop web container
-      run: docker-compose stop web
+      run: docker compose stop web
 
     - name: Run tests (with 2FA)
       env:
         ENABLE_2FA: "true"
       run: |
-        docker-compose run --service-ports --name=web --rm --entrypoint="" web coverage run --source='.' ./manage.py test --settings=geocity.settings_test --keepdb
+        docker compose run --service-ports --name=web --rm --entrypoint="" web coverage run --source='.' ./manage.py test --settings=geocity.settings_test --keepdb
 
     - name: Coverage report (with 2FA)
-      run: docker-compose run --rm --entrypoint="" web coverage report -m
+      run: docker compose run --rm --entrypoint="" web coverage report -m
 
     - name: Run tests (without 2FA)
       env:
         ENABLE_2FA: "false"
       run: |
-        docker-compose run --service-ports --name=web --rm --entrypoint="" web coverage run --source='.' ./manage.py test --settings=geocity.settings_test --keepdb
+        docker compose run --service-ports --name=web --rm --entrypoint="" web coverage run --source='.' ./manage.py test --settings=geocity.settings_test --keepdb
 
     - name: Coverage report (without 2FA)
-      run: docker-compose run --rm --entrypoint="" web coverage report -m
+      run: docker compose run --rm --entrypoint="" web coverage report -m
 
     - name: Upload test output images
       if: failure()

@@ -14,7 +14,7 @@ git clone git@github.com:yverdon/geocity.git && cd geocity
 # copy default config
 cp -n .env.example .env
 # start the stack
-docker-compose up --build -d --remove-orphans
+docker compose up --build -d --remove-orphans
 ```
 
 **Load demo data**
@@ -25,7 +25,7 @@ There is some examples in same folder and you can create new ones.
 
 The file will automatically appear once it's created.
 
-`docker-compose run web python manage.py fixturize` is interactive and can use some arguments as :
+`docker compose run web python manage.py fixturize` is interactive and can use some arguments as :
 
 - `--help` : Shows description of command and available arguments
 - `--list` : List available files to be used as fixtures
@@ -34,7 +34,7 @@ The file will automatically appear once it's created.
 
 ```bash
 # Load demo data
-docker-compose run web python manage.py fixturize
+docker compose run web python manage.py fixturize
 ```
 
 ## Setting up production instance
@@ -59,19 +59,19 @@ CREATE EXTENSION unaccent;
 Set the following variables as follow
 
 ```ini
-COMPOSE_FILE=docker-compose.yml
+COMPOSE_FILE=docker compose.yml
 ```
 
 And review all other variables in order to fine tune your instance
 
 ### Deploying changes
 
-New changes are deployed with the following command. :warning: **WARNING**: on PROD, docker-compose up will automatically
+New changes are deployed with the following command. :warning: **WARNING**: on PROD, docker compose up will automatically
 run migrations, collect static files, compile messages and update integrator permissions in the entrypoint.
 
 ```bash
 # update the stack
-docker-compose up --build -d --remove-orphans
+docker compose up --build -d --remove-orphans
 ```
 
 ## Default Site
@@ -170,26 +170,26 @@ DEFAULT_SITE=localhost
 Run tests in a the running container
 
 ```bash
-docker-compose exec web python manage.py test --settings=geocity.settings_test
+docker compose exec web python manage.py test --settings=geocity.settings_test
 ```
 
 Run a specific test in the running container (adding the `--keepdb` flag speeds up iterations)
 
 ```bash
-docker-compose exec web python manage.py test --settings=geocity.settings_test --keepdb geocity.apps.permits.tests.test_a_permit_request.PermitRequestTestCase.test_administrative_entity_is_filtered_by_tag
+docker compose exec web python manage.py test --settings=geocity.settings_test --keepdb geocity.apps.permits.tests.test_a_permit_request.PermitRequestTestCase.test_administrative_entity_is_filtered_by_tag
 ```
 
 Test for report generation will fail when run in the running web container, because they spawn a test server to allow other container to communicate with it. You can run them in their own container, but need first to stop the running web container.
 
 ```bash
-docker-compose stop web
-docker-compose run --service-ports --name=web --rm --entrypoint="" web python manage.py test --settings=geocity.settings_test --keepdb geocity.tests.reports
+docker compose stop web
+docker compose run --service-ports --name=web --rm --entrypoint="" web python manage.py test --settings=geocity.settings_test --keepdb geocity.tests.reports
 ```
 
-These tests compare generated PDFs to expected PDFs. To regenerate the expected images, you need to provide the following env var to the docker-compose run command `-e TEST_UPDATED_EXPECTED_IMAGES=TRUE`. By definition, when doing so, tests will succeed, so don't forget to manually review the changes to the files.
+These tests compare generated PDFs to expected PDFs. To regenerate the expected images, you need to provide the following env var to the docker compose run command `-e TEST_UPDATED_EXPECTED_IMAGES=TRUE`. By definition, when doing so, tests will succeed, so don't forget to manually review the changes to the files.
 
 ```bash
-docker-compose run --service-ports --name=web --rm --entrypoint="" -e TEST_UPDATED_EXPECTED_IMAGES=TRUE web python manage.py test --settings=geocity.settings_test --keepdb geocity.tests.reports
+docker compose run --service-ports --name=web --rm --entrypoint="" -e TEST_UPDATED_EXPECTED_IMAGES=TRUE web python manage.py test --settings=geocity.settings_test --keepdb geocity.tests.reports
 ```
 
 ### Linting
@@ -240,10 +240,10 @@ To install a new package, add it to `requirements.in`, without pinning it to a
 specific version unless needed. Then run:
 
 ```
-docker-compose exec web pip-compile requirements.in
-docker-compose exec web pip-compile requirements_dev.in
-docker-compose exec web pip install -r requirements.txt
-docker-compose exec web pip install -r requirements_dev.txt
+docker compose exec web pip-compile requirements.in
+docker compose exec web pip-compile requirements_dev.in
+docker compose exec web pip install -r requirements.txt
+docker compose exec web pip install -r requirements_dev.txt
 ```
 
 Make sure you commit both the `requirements.in` and the `requirements.txt` files.
@@ -254,8 +254,8 @@ And the `requirements_dev.in` and the `requirements_dev.txt` files.
 To upgrade all the packages to their latest available version, run:
 
 ```
-docker-compose exec web pip-compile -U requirements.in
-docker-compose exec web pip install -r requirements.txt
+docker compose exec web pip-compile -U requirements.in
+docker compose exec web pip install -r requirements.txt
 ```
 
 To upgrade only a specific package, use `pip-compile -P <packagename>`.
@@ -263,8 +263,8 @@ The following commands will upgrade Django to its latest version, making sure
 it's compatible with other packages listed in the `requirements.in` file:
 
 ```
-docker-compose exec web pip-compile -P django requirements.in
-docker-compose exec web pip install -r requirements.txt
+docker compose exec web pip-compile -P django requirements.in
+docker compose exec web pip install -r requirements.txt
 ```
 
 ## Permissions and authentication
@@ -346,20 +346,20 @@ To run a migration, for example when the model has changed, execute
 Then execute `manage.py migrate`.
 
 ```
-docker-compose exec web python3 manage.py makemigrations <app_label>
-docker-compose exec web python3 manage.py migrate <app_label> <migration_name>
+docker compose exec web python3 manage.py makemigrations <app_label>
+docker compose exec web python3 manage.py migrate <app_label> <migration_name>
 ```
 
 For more information about Django's migrations, help is available at:
 
 ```
-docker-compose exec web python3 manage.py makemigrations --help
-docker-compose exec web python3 manage.py migrate --help
+docker compose exec web python3 manage.py makemigrations --help
+docker compose exec web python3 manage.py migrate --help
 ```
 
 ### Practical example
 
-Note: prepend `docker-compose exec web ` to the following python calls if your app is containerized.
+Note: prepend `docker compose exec web ` to the following python calls if your app is containerized.
 
 `<app_label>`: this is set automatically depending on which model file is modified. In Geocity, it will always be "permits" => so there is nothing to specify.
 
