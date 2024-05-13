@@ -112,6 +112,7 @@ services:
     image: external_statics
     build:
       context: services/external_statics
+      no_cache: true
     volumes:
       - static_root:/app/
 
