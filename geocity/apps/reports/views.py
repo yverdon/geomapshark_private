@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render
 from django.template.loader import render_to_string
+from django.utils.safestring import mark_safe
 from rest_framework.decorators import api_view
 
 from geocity.apps.accounts.decorators import permanent_user_required
@@ -12,6 +13,12 @@ from geocity.apps.submissions import permissions, services
 
 from .models import Report
 from .services import generate_report_pdf_as_response
+
+
+def preprocess_comment(comment):
+    if comment:
+        return mark_safe(comment.replace("\r\n", "<br>").replace("\n", "<br>"))
+    return comment
 
 
 # TODO: instead of taking Submission and Form arguments, we should take
@@ -43,6 +50,19 @@ def report_content(request, submission_id, form_id, report_id, **kwargs):
             "amend_properties": amend_props,
         },
     }
+
+    for group, validation in (
+        request_json_data["properties"].get("validations", {}).items()
+    ):
+        if "comment" in validation:
+            validation["comment"] = preprocess_comment(validation["comment"])
+
+    for form_key, forms in (
+        request_json_data["properties"].get("amend_fields", {}).items()
+    ):
+        for comment_key, comment in forms.get("fields", {}).items():
+            if "value" in comment:
+                comment["value"] = preprocess_comment(comment["value"])
 
     transaction = None
     if kwargs.get("transaction_id"):
