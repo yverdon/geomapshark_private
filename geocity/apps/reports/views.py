@@ -21,6 +21,27 @@ def preprocess_comment(comment):
     return comment
 
 
+def preprocess_field_format(value):
+    """
+    Used to transform fields in reports like ["first", "seconde"] to:
+    - first
+    - second
+
+    Without breaking other fields and not adding "- " to single choices fields
+    """
+    if value:
+        if isinstance(value, list):
+            print(len(value))
+            if len(value) > 1:
+                result = "- " + "<br>- ".join(str(item) for item in value)
+            else:
+                result = value[0]
+            return mark_safe(result)
+        else:
+            return preprocess_comment(value)
+    return value
+
+
 # TODO: instead of taking Submission and Form arguments, we should take
 # in SelectedForm, which already joins both, so they are consistent.
 @api_view(["GET"])  # pretend it's a DRF view, so we get token auth
@@ -51,18 +72,28 @@ def report_content(request, submission_id, form_id, report_id, **kwargs):
         },
     }
 
+    # Add line breaks for validation
     for group, validation in (
         request_json_data["properties"].get("validations", {}).items()
     ):
         if "comment" in validation:
             validation["comment"] = preprocess_comment(validation["comment"])
 
+    # Add line breaks for amend_fields
     for form_key, forms in (
         request_json_data["properties"].get("amend_fields", {}).items()
     ):
         for comment_key, comment in forms.get("fields", {}).items():
             if "value" in comment:
                 comment["value"] = preprocess_comment(comment["value"])
+
+    # Reformat fields to remove lists and add line breaks
+    for form_key, forms in (
+        request_json_data["properties"].get("submission_fields", {}).items()
+    ):
+        for field_key, field in forms.get("fields", {}).items():
+            if "value" in field:
+                field["value_formatted"] = preprocess_field_format(field["value"])
 
     transaction = None
     if kwargs.get("transaction_id"):
