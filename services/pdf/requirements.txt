@@ -28,7 +28,7 @@ pydyf==0.9.0
     # via weasyprint
 pyphen==0.14.0
     # via weasyprint
-requests==2.31.0
+requests==2.32.0
     # via -r requirements.in
 six==1.16.0
     # via html5lib
