@@ -726,6 +726,7 @@ class Submission(models.Model):
             existing_value_obj.delete()
         else:
             if is_file:
+
                 # Use private storage to prevent uploaded files exposition to the outside world
                 private_storage = fields.PrivateFileSystemStorage()
                 # If the given File has a `url` attribute, it means the value comes from the `initial` form data, so the
@@ -758,7 +759,21 @@ class Submission(models.Model):
                     directory, "{}_{}_{}{}".format(form.pk, field.pk, file_uuid, ext)
                 )
 
+                # Check that extension is allowed in field configuration if additional restriction is defined in admin
+                if field.allowed_file_types:
+                    if upper_ext not in field.allowed_file_types.upper():
+                        logger.warning(
+                            f"Attempt to upload unauthorized file type  for file ({value.name})"
+                        )
+                        # FIXME: send the validation error correctly to the form as this will in fact only raise a generic error to the user
+                        raise ValidationError(
+                            _(
+                                f"L'extension du fichier n'est pas autorisé pour ce document"
+                            )
+                        )
+
                 private_storage.save(path, value)
+
                 # Postprocess images: remove all exif metadata from for better security and user privacy
                 if upper_ext != "PDF":
                     upper_ext = ext[1:].upper()
