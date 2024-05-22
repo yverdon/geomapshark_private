@@ -450,6 +450,8 @@ class AdministrativeEntity(models.Model):
                 }
             )
 
+        # Unique constraint for agenda_domain
+        # Cannot be used on model, because None is also subject to the constraint (blank=True)
         if self.agenda_domain:
             if (
                 AdministrativeEntity.objects.exclude(pk=self.pk)
