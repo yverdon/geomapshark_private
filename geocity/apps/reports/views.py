@@ -15,30 +15,28 @@ from .models import Report
 from .services import generate_report_pdf_as_response
 
 
-def preprocess_comment(comment):
-    if comment:
-        return mark_safe(comment.replace("\r\n", "<br>").replace("\n", "<br>"))
-    return comment
-
-
 def preprocess_field_format(value):
     """
-    Used to transform fields in reports like ["first", "seconde"] to:
-    - first
-    - second
-
-    Without breaking other fields and not adding "- " to single choices fields
+    Uses of this function :
+    - Interpret line breaks
+    - Translate bool values in french
+    - Transform list in formatted strings
     """
-    if value:
-        if isinstance(value, list):
-            print(len(value))
-            if len(value) > 1:
-                result = "- " + "<br>- ".join(str(item) for item in value)
-            else:
-                result = value[0]
-            return mark_safe(result)
+
+    if isinstance(value, list):
+        print(len(value))
+        if len(value) > 1:
+            result = "- " + "<br>- ".join(str(item) for item in value)
         else:
-            return preprocess_comment(value)
+            result = value[0]
+        return mark_safe(result)
+
+    if isinstance(value, bool):
+        return "Vrai" if value else "Faux"
+
+    if value:
+        return mark_safe(value.replace("\r\n", "<br>").replace("\n", "<br>"))
+
     return value
 
 
@@ -77,7 +75,7 @@ def report_content(request, submission_id, form_id, report_id, **kwargs):
         request_json_data["properties"].get("validations", {}).items()
     ):
         if "comment" in validation:
-            validation["comment"] = preprocess_comment(validation["comment"])
+            validation["comment"] = preprocess_field_format(validation["comment"])
 
     # Add line breaks for amend_fields
     for form_key, forms in (
@@ -85,7 +83,7 @@ def report_content(request, submission_id, form_id, report_id, **kwargs):
     ):
         for comment_key, comment in forms.get("fields", {}).items():
             if "value" in comment:
-                comment["value"] = preprocess_comment(comment["value"])
+                comment["value"] = preprocess_field_format(comment["value"])
 
     # Reformat fields to remove lists and add line breaks
     for form_key, forms in (
