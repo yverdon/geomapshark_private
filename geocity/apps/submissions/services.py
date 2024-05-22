@@ -1,6 +1,7 @@
 import tempfile
 import zipfile
 from datetime import datetime
+from email.header import Header
 
 import filetype
 from constance import config
@@ -168,7 +169,7 @@ def send_validation_reminder(submission, absolute_uri_func):
 
 def send_email_notification(data, attachments=None):
     from_email_name = (
-        f'{data["submission"].administrative_entity.expeditor_name} '
+        f'{Header(data["submission"].administrative_entity.expeditor_name, "utf-8").encode()} '
         if data["submission"].administrative_entity.expeditor_name
         else ""
     )
