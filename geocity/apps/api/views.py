@@ -1,6 +1,6 @@
-import datetime
 import mimetypes
 import os
+from datetime import datetime, timedelta, timezone
 
 import requests
 from django.conf import settings
@@ -65,13 +65,13 @@ class SubmissionGeoTimeViewSet(viewsets.ReadOnlyModelViewSet):
 
         base_filter = Q()
         if starts_at:
-            start = datetime.datetime.strptime(starts_at, "%Y-%m-%d")
+            start = datetime.strptime(starts_at, "%Y-%m-%d")
             base_filter &= Q(starts_at__gte=start)
         if ends_at:
-            end = datetime.datetime.strptime(ends_at, "%Y-%m-%d")
+            end = datetime.strptime(ends_at, "%Y-%m-%d")
             base_filter &= Q(ends_at__lte=end)
         if show_only_future == "true":
-            base_filter &= Q(ends_at__gte=datetime.datetime.now())
+            base_filter &= Q(ends_at__gte=datetime.now())
         if administrative_entities:
             base_filter &= Q(
                 submission__administrative_entity__in=administrative_entities.split(",")
@@ -90,7 +90,7 @@ class SubmissionGeoTimeViewSet(viewsets.ReadOnlyModelViewSet):
             ).select_related("category"),
         )
 
-        today = datetime.datetime.today()
+        today = datetime.today()
         current_inquiry_prefetch = Prefetch(
             "submission__inquiries",
             queryset=SubmissionInquiry.objects.filter(
@@ -241,7 +241,7 @@ class SubmissionViewSet(WFS3DescribeModelViewSetMixin, viewsets.ReadOnlyModelVie
             queryset=Form.objects.select_related("category"),
         )
 
-        today = datetime.datetime.today()
+        today = datetime.today()
         current_inquiry_prefetch = Prefetch(
             "inquiries",
             queryset=SubmissionInquiry.objects.filter(
@@ -485,6 +485,18 @@ SubmissionLineViewSet = submission_view_set_subset_factory("lines")
 SubmissionPolyViewSet = submission_view_set_subset_factory("polygons")
 
 
+class CustomFileResponse(FileResponse):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Add header Expires
+        expiration_date = datetime.now() + timedelta(days=7)
+        expiration_date_http_format = expiration_date.strftime(
+            "%a, %d %b %Y %H:%M:%S GMT"
+        )
+        self["Expires"] = expiration_date_http_format
+
+
 def image_display(request, submission_id, image_name):
     safe_submission_id = get_valid_filename(submission_id)
     safe_image_name = get_valid_filename(image_name)
@@ -496,7 +508,7 @@ def image_display(request, submission_id, image_name):
     ):
         image_file = open(image_path, "rb")
         mime_type, encoding = mimetypes.guess_type(image_path)
-        response = FileResponse(image_file, content_type=mime_type)
+        response = CustomFileResponse(image_file, content_type=mime_type)
         return response
     else:
         return JsonResponse({"message": "unauthorized."}, status=404)
@@ -541,7 +553,7 @@ def image_thumbor_display(request, submission_id, image_name):
         response = requests.get(image_url)
 
     mime_type = get_mime_type(response.content)
-    thumbor_response = FileResponse(response, content_type=mime_type)
+    thumbor_response = CustomFileResponse(response, content_type=mime_type)
 
     return thumbor_response
 
@@ -625,21 +637,19 @@ class AgendaViewSet(viewsets.ReadOnlyModelViewSet):
             submissions = get_agenda_submissions(entities, submissions)
 
         if "starts_at" in query_params:
-            starts_at = datetime.datetime.strptime(
-                query_params["starts_at"], "%Y-%m-%d"
-            )
-            starts_at = starts_at.replace(tzinfo=datetime.timezone.utc)
+            starts_at = datetime.strptime(query_params["starts_at"], "%Y-%m-%d")
+            starts_at = starts_at.replace(tzinfo=timezone.utc)
             submissions = submissions.filter(geo_time__ends_at__gte=starts_at)
 
         if "ends_at" in query_params:
-            ends_at = datetime.datetime.strptime(query_params["ends_at"], "%Y-%m-%d")
+            ends_at = datetime.strptime(query_params["ends_at"], "%Y-%m-%d")
             ends_at = ends_at.replace(
-                hour=23, minute=59, second=59, tzinfo=datetime.timezone.utc
+                hour=23, minute=59, second=59, tzinfo=timezone.utc
             )
             submissions = submissions.filter(geo_time__starts_at__lte=ends_at)
 
         if "starts_at" not in query_params and "ends_at" not in query_params:
-            today = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(
+            today = datetime.now(timezone.utc) + timedelta(
                 hours=settings.LOCAL_TIME_ZONE_UTC
             )
             submissions = submissions.filter(geo_time__ends_at__gte=today)
