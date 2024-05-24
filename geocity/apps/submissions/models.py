@@ -719,8 +719,6 @@ class Submission(models.Model):
         )
         is_file = field.input_type == Field.INPUT_TYPE_FILE
         is_date = field.input_type == Field.INPUT_TYPE_DATE
-        # TODO this doesn’t seem to be used? Remove?
-        is_address = field.input_type == Field.INPUT_TYPE_ADDRESS
 
         if value == "" or value is None:
             existing_value_obj.delete()
@@ -759,18 +757,10 @@ class Submission(models.Model):
                     directory, "{}_{}_{}{}".format(form.pk, field.pk, file_uuid, ext)
                 )
 
-                # Check that extension is allowed in field configuration if additional restriction is defined in admin
-                if field.allowed_file_types:
-                    if upper_ext not in field.allowed_file_types.upper():
-                        logger.warning(
-                            f"Attempt to upload unauthorized file type  for file ({value.name})"
-                        )
-                        # FIXME: send the validation error correctly to the form as this will in fact only raise a generic error to the user
-                        raise ValidationError(
-                            _(
-                                f"L'extension du fichier n'est pas autorisé pour ce document"
-                            )
-                        )
+                # Check file size and extension
+                from . import services
+
+                services.validate_file(value)
 
                 private_storage.save(path, value)
 
