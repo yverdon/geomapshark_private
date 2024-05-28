@@ -26,7 +26,8 @@ from geocity.apps.accounts.decorators import (
     check_mandatory_2FA,
     permanent_user_required,
 )
-from geocity.fields import PrivateFileSystemStorage, PublicFileSystemStorage
+from geocity.apps.submissions import services
+from geocity.fields import PublicFileSystemStorage
 
 from . import forms, models
 from .users import is_2FA_mandatory
@@ -396,11 +397,8 @@ def administrative_entity_file_download(request, path):
     Only allows logged user to download administrative entity files
     """
 
-    mime_type, encoding = mimetypes.guess_type(path)
-    storage = PrivateFileSystemStorage()
-
     try:
-        return StreamingHttpResponse(storage.open(path), content_type=mime_type)
+        return services.download_file(path)
     except IOError:
         raise Http404
 
