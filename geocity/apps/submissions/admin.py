@@ -262,7 +262,7 @@ class ComplementaryDocumentTypeAdmin(IntegratorFilterMixin, admin.ModelAdmin):
         return list_display
 
     # Fields used in search_fields and list_filter
-    superusersearch_fields = [
+    superuser_search_fields = [
         "name",
         "form__name",
         "integrator__name",
