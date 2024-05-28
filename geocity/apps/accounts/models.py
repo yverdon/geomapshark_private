@@ -177,6 +177,7 @@ class PermitDepartment(models.Model):
         _("Groupe des administrateurs"),
         help_text=_("Identifiant du groupe"),
         default=0,
+        null=True,
     )
     is_integrator_admin = models.BooleanField(
         _("Intégrateur"),

@@ -1104,7 +1104,7 @@ Après : Excellent projet qui bénéficiera à la communauté."""
         administrative_entity.sites.add(Site.objects.get(name="default site"))
 
         self.set_statuses_for_entity(administrative_entity)
-        return administrative_entity
+        return "coucou"
 
     def set_statuses_for_entity(self, administrative_entity):
         for status_value in Submission.STATUS_CHOICES:

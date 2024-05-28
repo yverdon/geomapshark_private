@@ -1,0 +1,9 @@
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+
+{% block object-tools-items %}
+  <a href="{% url "admin:create_integrator" %}" class="btn btn-success float-right">
+    <i class="fa fa-plus-circle"></i> &nbsp; Créer un intégrateur
+  </a>
+  {{ block.super }}
+{% endblock %}

@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from django import forms
 from django.conf import settings
 from django.contrib import admin, messages
@@ -75,7 +77,8 @@ def filter_for_user(user, qs):
     if not user.is_superuser:
         qs = qs.filter(
             integrator__in=user.groups.filter(
-                permit_department__is_integrator_admin=True
+                permit_department__is_integrator_admin=True,
+                permit_department__integrator__isnull=False,
             )
         )
     return qs
@@ -524,6 +527,7 @@ class UserInline(admin.TabularInline):
 
 
 class GroupAdmin(BaseGroupAdmin):
+    change_list_template = "accounts/admin/group_change_list.html"
     inlines = (PermitDepartmentInline, UserInline)
     form = GroupAdminForm
     list_display = [
@@ -647,6 +651,61 @@ class GroupAdmin(BaseGroupAdmin):
                 kwargs["queryset"] = integrator_permissions
 
         return super().formfield_for_manytomany(db_field, request, **kwargs)
+
+    def create_integrator(self, request):
+
+        administrative_entity = AdministrativeEntity.objects.create(
+            name=str(uuid4()),
+            ofs_id=9999,
+            geom="SRID=2056;MultiPolygon (((2518409 1150276, 2517764 1190494, 2575188 1193290, 2579489 1152641, 2518409 1150276)))",
+            is_single_form_submissions=True,
+            services_fees_hourly_rate=154,
+        )
+
+        group = Group.objects.create(name=str(uuid4()))
+        models.PermitDepartment.objects.create(
+            group=group,
+            administrative_entity=administrative_entity,
+            is_validator=False,
+            is_integrator_admin=True,
+            is_backoffice=False,
+            is_default_validator=False,
+            integrator=None,
+        )
+
+        message = _(
+            "Nouvel intégrateur créé avec succès, vous devez maintenant finaliser la configuration du groupe et de son entité administrative: "
+        )
+
+        messages.add_message(
+            request,
+            messages.SUCCESS,
+            f"{message} {administrative_entity.pk}",
+        )
+
+        return redirect(
+            reverse(
+                "admin:auth_group_change",
+                kwargs={"object_id": group.pk},
+            )
+        )
+
+    def set_statuses_for_entity(self, administrative_entity):
+        for status_value in Submission.STATUS_CHOICES:
+            SubmissionWorkflowStatus.objects.get_or_create(
+                status=status_value[0], administrative_entity=administrative_entity
+            )
+
+    def get_urls(self):
+        urls = super().get_urls()
+
+        return [
+            path(
+                "create-integrator/",
+                self.admin_site.admin_view(self.create_integrator),
+                name="create_integrator",
+            ),
+        ] + urls
 
 
 class SiteWithAdministrativeEntitiesField(forms.ModelMultipleChoiceField):
