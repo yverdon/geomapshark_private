@@ -262,7 +262,7 @@ class ComplementaryDocumentTypeAdmin(IntegratorFilterMixin, admin.ModelAdmin):
         return list_display
 
     # Fields used in search_fields and list_filter
-    superadmin_search_fields = [
+    superusersearch_fields = [
         "name",
         "form__name",
         "integrator__name",
@@ -272,7 +272,7 @@ class ComplementaryDocumentTypeAdmin(IntegratorFilterMixin, admin.ModelAdmin):
         "form__name",
     ]
 
-    superadmin_list_search_fields = [
+    superuser_list_search_fields = [
         "name",
         "form",
         "integrator",
@@ -285,14 +285,14 @@ class ComplementaryDocumentTypeAdmin(IntegratorFilterMixin, admin.ModelAdmin):
 
     def get_search_fields(self, request):
         if request.user.is_superuser:
-            search_fields = self.superadmin_search_fields
+            search_fields = self.superuser_search_fields
         else:
             search_fields = self.integrator_search_fields
         return search_fields
 
     def get_list_filter(self, request):
         if request.user.is_superuser:
-            list_filter = self.superadmin_list_search_fields
+            list_filter = self.superuser_list_search_fields
         else:
             list_filter = self.integrator_list_search_fields
         return list_filter
