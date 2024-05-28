@@ -781,6 +781,7 @@ class AdministrativeEntityAdmin(IntegratorFilterMixin, admin.ModelAdmin):
             {
                 "fields": (
                     "name",
+                    "agenda_domain",
                     "agenda_name",
                     "tags",
                     "ofs_id",

@@ -964,7 +964,7 @@ def get_available_filters_for_agenda_as_qs(domains):
 
     entity = (
         AdministrativeEntity.objects.filter(
-            tags__name=domain,
+            agenda_domain=domain,
             forms__agenda_visible=True,
         )
         .distinct()

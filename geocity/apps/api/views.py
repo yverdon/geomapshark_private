@@ -629,11 +629,10 @@ class AgendaViewSet(viewsets.ReadOnlyModelViewSet):
             domain_filter = query_params.getlist("domain_filter")
             entities = AdministrativeEntity.objects.filter(id__in=domain_filter)
             submissions = get_agenda_submissions(entities, submissions)
-
         elif "domain" in query_params:
             domains = query_params["domain"]
             domains = domains.split(",") if domains else None
-            entities = AdministrativeEntity.objects.filter(tags__name__in=domains)
+            entities = AdministrativeEntity.objects.filter(agenda_domain__in=domains)
             submissions = get_agenda_submissions(entities, submissions)
 
         if "starts_at" in query_params:
