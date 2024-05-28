@@ -1012,13 +1012,11 @@ class TemplateCustomizationAdmin(admin.ModelAdmin):
 
     @admin.display(boolean=True)
     def has_background_image(self, obj):
-        try:
-            return obj.background_image.url is not None
-        except ValueError:
-            return False
+        return True if obj.background_image.name else False
 
-    has_background_image.admin_order_field = "background_image"
-    has_background_image.short_description = "Image de fond"
+    if has_background_image:
+        has_background_image.admin_order_field = "background_image"
+        has_background_image.short_description = "Image de fond"
 
 
 # Inline for base Django Site
