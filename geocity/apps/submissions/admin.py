@@ -239,7 +239,11 @@ class ComplementaryDocumentTypeAdmin(IntegratorFilterMixin, admin.ModelAdmin):
         ComplementaryDocumentTypeInline,
     ]
     form = ComplementaryDocumentTypeAdminForm
-    fields = ["name", "form", "integrator"]
+    fields = [
+        "name",
+        "form",
+        "integrator",
+    ]
 
     def get_list_display(self, request):
         if request.user.is_superuser:
@@ -258,29 +262,39 @@ class ComplementaryDocumentTypeAdmin(IntegratorFilterMixin, admin.ModelAdmin):
         return list_display
 
     # Fields used in search_fields and list_filter
-    integrator_fields = [
+    superuser_search_fields = [
+        "name",
+        "form__name",
+        "integrator__name",
+    ]
+    integrator_search_fields = [
+        "name",
+        "form__name",
+    ]
+
+    superuser_list_search_fields = [
         "name",
         "form",
         "integrator",
-        "form__administrative_entities",
     ]
-    user_fields = [
+
+    integrator_list_search_fields = [
         "name",
         "form",
     ]
 
     def get_search_fields(self, request):
         if request.user.is_superuser:
-            search_fields = self.integrator_fields
+            search_fields = self.superuser_search_fields
         else:
-            search_fields = self.user_fields
+            search_fields = self.integrator_search_fields
         return search_fields
 
     def get_list_filter(self, request):
         if request.user.is_superuser:
-            list_filter = self.integrator_fields
+            list_filter = self.superuser_list_search_fields
         else:
-            list_filter = self.user_fields
+            list_filter = self.integrator_list_search_fields
         return list_filter
 
     # List types of documents
