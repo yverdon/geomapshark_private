@@ -1011,7 +1011,7 @@ class TemplateCustomizationAdmin(admin.ModelAdmin):
 
     @admin.display(boolean=True)
     def has_background_image(self, obj):
-        return False if obj.background_image.name == "" else True
+        return True if obj.background_image.name else False
 
     if has_background_image:
         has_background_image.admin_order_field = "background_image"
