@@ -35,7 +35,7 @@ charset-normalizer==3.3.2
     #   requests
 click==8.1.7
     # via pip-tools
-coverage==7.4.4
+coverage==7.5.3
     # via -r requirements_dev.in
 cryptography==42.0.5
     # via
@@ -112,7 +112,7 @@ django-crispy-forms==1.14.0
     # via -r requirements.txt
 django-cron==0.6.0
     # via -r requirements.txt
-django-debug-toolbar==4.3.0
+django-debug-toolbar==4.4.2
     # via -r requirements_dev.in
 django-extensions==3.2.3
     # via -r requirements_dev.in
@@ -183,21 +183,21 @@ et-xmlfile==1.1.0
     # via
     #   -r requirements.txt
     #   openpyxl
-exceptiongroup==1.2.0
+exceptiongroup==1.2.1
     # via ipython
 executing==2.0.1
     # via stack-data
 factory-boy==3.3.0
     # via -r requirements_dev.in
-faker==24.11.0
+faker==25.3.0
     # via
     #   -r requirements_dev.in
     #   factory-boy
-filelock==3.13.4
+filelock==3.14.0
     # via virtualenv
 filetype==1.2.0
     # via -r requirements.txt
-freezegun==1.4.0
+freezegun==1.5.1
     # via -r requirements_dev.in
 gdal==3.6.3
     # via -r requirements.txt
@@ -205,7 +205,7 @@ gunicorn==22.0.0
     # via -r requirements.txt
 html5lib==1.1
     # via -r requirements.txt
-identify==2.5.35
+identify==2.5.36
     # via pre-commit
 idna==3.7
     # via
@@ -215,7 +215,7 @@ inflection==0.5.1
     # via -r requirements.txt
 ipdb==0.13.13
     # via -r requirements_dev.in
-ipython==8.23.0
+ipython==8.24.0
     # via ipdb
 jdcal==1.4.1
     # via -r requirements.txt
@@ -278,13 +278,13 @@ pillow==10.3.0
     #   pdf2image
 pip-tools==7.4.1
     # via -r requirements_dev.in
-platformdirs==4.2.0
+platformdirs==4.2.2
     # via virtualenv
 postfinancecheckout==5.1.0
     # via -r requirements.txt
-pre-commit==3.7.0
+pre-commit==3.7.1
     # via -r requirements_dev.in
-prompt-toolkit==3.0.43
+prompt-toolkit==3.0.45
     # via ipython
 psycopg2-binary==2.9.9
     # via -r requirements.txt
@@ -296,7 +296,7 @@ pycparser==2.22
     # via
     #   -r requirements.txt
     #   cffi
-pygments==2.17.2
+pygments==2.18.0
     # via ipython
 pyjwt[crypto]==2.8.0
     # via
@@ -306,7 +306,7 @@ pypng==0.20220715.0
     # via
     #   -r requirements.txt
     #   qrcode
-pyproject-hooks==1.0.0
+pyproject-hooks==1.1.0
     # via
     #   build
     #   pip-tools
@@ -373,8 +373,7 @@ tomli==2.0.1
     #   build
     #   ipdb
     #   pip-tools
-    #   pyproject-hooks
-traitlets==5.14.2
+traitlets==5.14.3
     # via
     #   ipython
     #   matplotlib-inline
@@ -399,7 +398,7 @@ urllib3==2.2.1
     #   docker
     #   postfinancecheckout
     #   requests
-virtualenv==20.25.3
+virtualenv==20.26.2
     # via pre-commit
 wcwidth==0.2.13
     # via prompt-toolkit
