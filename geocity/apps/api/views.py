@@ -625,6 +625,11 @@ class AgendaViewSet(viewsets.ReadOnlyModelViewSet):
         # Filter domain (administrative_entity) to permit sites to filter on their own domain (e.g.: sports, culture)
         domains = None
 
+        # Dont filter with other conditions, when trying to access to event details
+        # Still possible to put after a domain_filter later, if we return it in agenda-embed
+        if "pk" in self.kwargs:
+            return submissions
+
         if "domain_filter" in query_params:
             domain_filter = query_params.getlist("domain_filter")
             entities = AdministrativeEntity.objects.filter(id__in=domain_filter)
