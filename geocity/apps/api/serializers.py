@@ -956,24 +956,17 @@ def get_available_filters_for_agenda_as_qs(domains):
     Returns a list of filters available for a specific entity.
     The order is important, agenda-embed has no logic, everything is set here
     """
+    multi_entity = False
+    available_filters = []
 
-    if not domains or len(domains) > 1:
-        return None
-    else:
-        domain = domains[0]
-
-    entity = (
-        AdministrativeEntity.objects.filter(
-            tags__name=domain,
-            forms__agenda_visible=True,
-        )
-        .distinct()
-        .first()
+    entities = AdministrativeEntity.objects.filter(
+        tags__name__in=domains,
+        forms__agenda_visible=True,
     )  # get can return an error
 
-    available_filters = Field.objects.filter(forms__administrative_entities=entity)
-
-    available_filters = available_filters.filter(
+    available_filters = Field.objects.filter(
+        forms__administrative_entities__in=entities
+    ).filter(
         Q(filter_for_api=True)
         & (
             Q(input_type=Field.INPUT_TYPE_LIST_SINGLE)
@@ -981,14 +974,17 @@ def get_available_filters_for_agenda_as_qs(domains):
         )
     )
 
-    return available_filters
+    if len(entities) > 1:
+        # find common filter if muktiple entites / domains
+        multi_entity = True
+    return available_filters, multi_entity
 
 
 def get_available_filters_for_agenda_as_json(domains):
     """
     Returns the list of filters for api
     """
-    available_filters = get_available_filters_for_agenda_as_qs(domains)
+    available_filters, multi_entity = get_available_filters_for_agenda_as_qs(domains)
     agenda_filters = []
 
     # Category filter available for simple and detailed agenda. Example : Sport, Culture, Économie, etc...
@@ -1012,21 +1008,29 @@ def get_available_filters_for_agenda_as_json(domains):
         agenda_filters.append(domain_filter)
 
     if available_filters:
+        print(available_filters)
+        unique_api_names = []
         for available_filter in available_filters:
-            actual_filter = {
+            current_filter = {
                 "label": available_filter.name,
                 "slug": available_filter.api_name,
             }
-            actual_filter["options"] = [
-                {
-                    "id": key,
-                    "label": choice.strip(),
-                }
-                for key, choice in enumerate(
-                    available_filter.choices.strip().splitlines()
-                )
-            ]
-            agenda_filters.append(actual_filter)
+            if not available_filter.api_name in unique_api_names:
+                unique_api_names.append(available_filter.api_name)
+
+                current_filter["options"] = [
+                    {
+                        "id": key,
+                        "label": choice.strip(),
+                    }
+                    for key, choice in enumerate(
+                        available_filter.choices.strip().splitlines()
+                    )
+                ]
+
+                agenda_filters.append(current_filter)
+    print("coucocu")
+    print(agenda_filters)
     return agenda_filters if agenda_filters != [] else None
 
 
