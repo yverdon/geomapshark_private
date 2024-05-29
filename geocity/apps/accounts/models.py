@@ -257,6 +257,14 @@ class AdministrativeEntityManager(models.Manager):
 
 class AdministrativeEntity(models.Model):
     name = models.CharField(_("name"), max_length=128)
+    agenda_domain = models.CharField(
+        _("Domaine de l'agenda"),
+        help_text=_(
+            "Utilisé afin de sélectionner les agendas visible dans agenda-embed"
+        ),
+        max_length=128,
+        blank=True,
+    )
     agenda_name = models.CharField(
         _("Nom dans l'api agenda"),
         help_text=_("Nom visible dans le filtre de l'agenda"),
@@ -441,6 +449,18 @@ class AdministrativeEntity(models.Model):
                     )
                 }
             )
+
+        # Unique constraint for agenda_domain
+        # Cannot be used on model, because None is also subject to the constraint (blank=True)
+        if self.agenda_domain:
+            if (
+                AdministrativeEntity.objects.exclude(pk=self.pk)
+                .filter(agenda_domain=self.agenda_domain)
+                .exists()
+            ):
+                raise ValidationError(
+                    {"agenda_domain": _("Le domaine de l'agenda doit être unique.")}
+                )
 
         if (
             not self.is_single_form_submissions

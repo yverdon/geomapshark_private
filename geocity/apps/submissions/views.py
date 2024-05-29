@@ -1255,6 +1255,15 @@ def anonymous_submission(request):
         raise Http404
 
 
+def display_warning_message_for_awaiting_supplement_submission(request):
+    messages.warning(
+        request,
+        _(
+            "N'oubliez pas de renvoyer le formulaire une fois que vous aurez ajouté les compléments demandés."
+        ),
+    )
+
+
 @redirect_bad_status_to_detail
 @login_required
 @user_passes_test(has_profile)
@@ -1449,6 +1458,9 @@ def submission_fields(request, submission_id):
         form_payment = submission.get_form_for_payment()
         if form_payment is not None:
             requires_online_payment = form_payment.requires_online_payment
+
+    if submission.status == models.Submission.STATUS_AWAITING_SUPPLEMENT:
+        display_warning_message_for_awaiting_supplement_submission(request)
 
     if request.method == "POST":
         # Disable `required` fields validation to allow partial save
@@ -1650,6 +1662,9 @@ def submission_appendices(request, submission_id):
         current_step_type=StepType.APPENDICES,
     )
 
+    if submission.status == models.Submission.STATUS_AWAITING_SUPPLEMENT:
+        display_warning_message_for_awaiting_supplement_submission(request)
+
     if request.method == "POST":
         form = forms.AppendicesForm(
             instance=submission,
@@ -1702,6 +1717,9 @@ def submission_contacts(request, submission_id):
     creditorform = forms.SubmissionCreditorForm(
         request.POST or None, instance=submission
     )
+
+    if submission.status == models.Submission.STATUS_AWAITING_SUPPLEMENT:
+        display_warning_message_for_awaiting_supplement_submission(request)
 
     if request.method == "POST":
         formset = forms.get_submission_contacts_formset_initiated(
@@ -1776,6 +1794,9 @@ def submission_geo_time(request, submission_id):
             comes_from_automatic_geocoding=False, form=None, field=None
         ).all(),
     )
+
+    if submission.status == models.Submission.STATUS_AWAITING_SUPPLEMENT:
+        display_warning_message_for_awaiting_supplement_submission(request)
 
     if request.method == "POST":
         if formset.is_valid():
@@ -1972,6 +1993,9 @@ def submission_submit(request, submission_id):
         for step in get_progress_bar_steps(request, submission).values()
         if step.errors_count and step.url
     ]
+
+    if submission.status == models.Submission.STATUS_AWAITING_SUPPLEMENT:
+        display_warning_message_for_awaiting_supplement_submission(request)
 
     if request.method == "POST":
         if incomplete_steps:
@@ -2621,8 +2645,6 @@ class ConfirmTransactionCallback(View):
         transaction = get_transaction_from_id(pk)
         submission = transaction.submission_price.submission
 
-        submission.generate_and_save_pdf("confirmation", transaction)
-
         if (
             not request.user == submission.author
             or not transaction.status == transaction.STATUS_UNPAID
@@ -2631,6 +2653,7 @@ class ConfirmTransactionCallback(View):
 
         processor = get_payment_processor(submission.get_form_for_payment())
         if processor.is_transaction_authorized(transaction):
+            submission.generate_and_save_pdf("confirmation", transaction)
             transaction.set_paid()
             submission_submit_confirmed(request, submission.pk)
 
@@ -2766,8 +2789,6 @@ class ConfirmProlongationTransactionView(View):
         transaction = get_transaction_from_id(pk)
         submission = transaction.submission_price.submission
 
-        submission.generate_and_save_pdf("confirmation", transaction)
-
         if (
             not request.user == submission.author
             or not transaction.status == transaction.STATUS_UNPAID
@@ -2776,9 +2797,11 @@ class ConfirmProlongationTransactionView(View):
 
         processor = get_payment_processor(submission.get_form_for_payment())
         if processor.is_transaction_authorized(transaction):
+            submission.generate_and_save_pdf("confirmation", transaction)
             transaction.set_paid()
             submission.prolongation_date = datetime.fromtimestamp(prolongation_date)
             _set_prolongation_requested_and_notify(submission, request)
+
             return render(
                 request,
                 "submissions/submission_payment_callback_confirm.html",

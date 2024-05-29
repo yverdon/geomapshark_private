@@ -1,6 +1,6 @@
 # Geocity - build your (geo)-forms easily! ![Geocity CI](https://github.com/yverdon/geocity/workflows/Geocity%20CI/badge.svg?branch=main)
 
-**[What is Geocity ?](https://geocity.ch/about)**
+**[What is Geocity ?](https://geocity-asso.ch)**
 
 **[Features and user guide](https://github.com/yverdon/geocity/wiki)**
 

@@ -11,7 +11,6 @@
 {% else %}
 {% translate "Vous pouvez la consulter sur le lien suivant" %}: {{ submission_url }}
 {% endif %}
-
 {% translate "Avec nos meilleures salutations," %}
 {% if administrative_entity.custom_signature %}
 {{ administrative_entity.custom_signature }}

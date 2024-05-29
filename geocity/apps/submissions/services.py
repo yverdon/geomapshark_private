@@ -1,6 +1,7 @@
 import tempfile
 import zipfile
 from datetime import datetime
+from email.header import Header
 
 import filetype
 from constance import config
@@ -168,7 +169,7 @@ def send_validation_reminder(submission, absolute_uri_func):
 
 def send_email_notification(data, attachments=None):
     from_email_name = (
-        f'{data["submission"].administrative_entity.expeditor_name} '
+        f'{Header(data["submission"].administrative_entity.expeditor_name, "utf-8").encode()} '
         if data["submission"].administrative_entity.expeditor_name
         else ""
     )
@@ -314,10 +315,10 @@ def login_for_anonymous_request(request, entity):
 
 def download_file(path):
     storage = fields.PrivateFileSystemStorage()
-    # for some strange reason, firefox refuses to download the file.
-    # so we need to set the `Content-Type` to `application/octet-stream` so
-    # firefox will download it. For the time being, this "dirty" hack works
-    return FileResponse(storage.open(path), content_type="application/octet-stream")
+    # Force all files to be downloaded and never opened in browser on same domain
+    return FileResponse(
+        storage.open(path), content_type="application/octet-stream", as_attachment=True
+    )
 
 
 def download_archives(archive_ids, user):

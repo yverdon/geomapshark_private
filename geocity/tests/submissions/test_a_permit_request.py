@@ -2,6 +2,7 @@
 import datetime
 import re
 from datetime import date
+from email.header import Header
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -2952,11 +2953,13 @@ class AdministrativeEntitySecretaryEmailTestcase(TestCase):
             follow=True,
         )
 
+        from_email = (
+            f'{Header("Geocity Rocks", "utf-8").encode()} <geocity_rocks@geocity.ch>'
+        )
+
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(
-            mail.outbox[0].from_email, "Geocity Rocks <geocity_rocks@geocity.ch>"
-        )
+        self.assertEqual(mail.outbox[0].from_email, from_email)
         self.assertEqual(
             mail.outbox[0].subject,
             "{} ({})".format(

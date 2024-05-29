@@ -51,7 +51,7 @@ class AgendaAPITestCase(TestCase):
         self.sit_integrator_group = factories.IntegratorGroupFactory(department=None)
         self.sit_pilot_group = factories.SecretariatGroupFactory(department=None)
         self.sit_administrative_entity = factories.AdministrativeEntityFactory(
-            tags=["sit"], integrator=self.sit_integrator_group
+            agenda_domain="sit", integrator=self.sit_integrator_group
         )
 
         factories.IntegratorPermitDepartmentFactory(
@@ -435,7 +435,7 @@ class AgendaAPITestCase(TestCase):
         self.fin_integrator_group = factories.IntegratorGroupFactory(department=None)
         self.fin_group = factories.SecretariatGroupFactory(department=None)
         self.fin_administrative_entity = factories.AdministrativeEntityFactory(
-            tags=["fin"], integrator=self.fin_integrator_group
+            agenda_domain="fin", integrator=self.fin_integrator_group
         )
 
         factories.IntegratorPermitDepartmentFactory(

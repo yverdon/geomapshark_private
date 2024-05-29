@@ -3,7 +3,7 @@ volumes:
 
 services:
   web: # Name of this container should not be changed
-    image: gms_web
+    image: geocity
     restart: unless-stopped
     build:
       context: ./
@@ -79,6 +79,7 @@ services:
       SITE_DOMAIN:
       USE_THUMBOR:
       THUMBOR_SERVICE_URL:
+      CSRF_TRUSTED_ORIGINS:
     ports:
       - "${DJANGO_DOCKER_PORT}:9000"
     networks:

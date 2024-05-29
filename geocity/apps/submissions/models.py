@@ -719,13 +719,12 @@ class Submission(models.Model):
         )
         is_file = field.input_type == Field.INPUT_TYPE_FILE
         is_date = field.input_type == Field.INPUT_TYPE_DATE
-        # TODO this doesn’t seem to be used? Remove?
-        is_address = field.input_type == Field.INPUT_TYPE_ADDRESS
 
         if value == "" or value is None:
             existing_value_obj.delete()
         else:
             if is_file:
+
                 # Use private storage to prevent uploaded files exposition to the outside world
                 private_storage = fields.PrivateFileSystemStorage()
                 # If the given File has a `url` attribute, it means the value comes from the `initial` form data, so the
@@ -758,7 +757,13 @@ class Submission(models.Model):
                     directory, "{}_{}_{}{}".format(form.pk, field.pk, file_uuid, ext)
                 )
 
+                # Check file size and extension
+                from . import services
+
+                services.validate_file(value)
+
                 private_storage.save(path, value)
+
                 # Postprocess images: remove all exif metadata from for better security and user privacy
                 if upper_ext != "PDF":
                     upper_ext = ext[1:].upper()
