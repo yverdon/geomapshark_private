@@ -1,7 +1,7 @@
 import string
 
 import django.db.models
-from adminsortable2.admin import SortableAdminMixin, SortableInlineAdminMixin
+from adminsortable2.admin import SortableAdminMixin, SortableTabularInline
 from constance import config
 from django import forms
 from django.contrib import admin
@@ -178,8 +178,7 @@ class FormAdminForm(forms.ModelForm):
         return super().save(*args, **kwargs)
 
 
-# TODO: enable drag and drop for inline reorder
-class FormFieldInline(admin.TabularInline, SortableInlineAdminMixin):
+class FormFieldInline(SortableTabularInline):
     model = models.FormField
     extra = 2
     verbose_name = _("Champ")
@@ -198,7 +197,7 @@ class FormFieldInline(admin.TabularInline, SortableInlineAdminMixin):
         css = {"all": ("css/admin/admin.css",)}
 
 
-class FormPricesInline(admin.TabularInline, SortableInlineAdminMixin):
+class FormPricesInline(admin.TabularInline):
     model = models.Form.prices.through
     extra = 1
     verbose_name = _("Tarif")

@@ -11,7 +11,37 @@
     overflow-x: auto;
 }
 
-/*Reduce select2 field width so that CRUD button remain visible*/
-tr .select2 {
-    width: 70% !important;
+/* tweak admin-sortable2 for jazzmin compatibility with tabular inlines */
+/* Used in "1.4 Formulaires", tab "Champs" */
+
+fieldset.module.sortable tbody tr.form-row {
+    padding: 20px 0px 10px 0px; /* top right bottom left*/
+    border-bottom: 1px dashed #c7c7c7;
+}
+
+fieldset.module.sortable tbody .original {
+    width: 50px;
+    text-align: center;
+}
+
+fieldset.module.sortable td.original p {
+    width: 45px !important;
+}
+
+fieldset.module.sortable tbody .field-field {
+    width: 650px;
+}
+
+fieldset.module.sortable tbody .delete {
+    width: 50px; /* width of div. (thead .original - tbody.original - tbody .field-field)*/
+    position: relative; /* used to move 50 px left */
+    left: 75px;
+}
+
+fieldset.module.sortable thead .original {
+    width: 750px;
+}
+
+fieldset.module.sortable thead .column-field {
+    display: none;
 }
