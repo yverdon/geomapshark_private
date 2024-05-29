@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm, BaseUserCreationForm
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.utils.translation import gettext_lazy as _
+from django_countries.fields import CountryField
 
 from geocity.fields import AddressWidget
 
@@ -245,6 +246,7 @@ class GenericUserProfileForm(forms.ModelForm):
             "address",
             "zipcode",
             "city",
+            "country",
             "phone_first",
             "phone_second",
             "company_name",
@@ -300,6 +302,7 @@ class SocialSignupForm(SignupForm):
         max_value=9999,
         widget=forms.NumberInput(attrs={"required": "required"}),
     )
+
     city = forms.CharField(
         max_length=100,
         label=_("Ville"),
@@ -307,6 +310,9 @@ class SocialSignupForm(SignupForm):
             attrs={"placeholder": "ex: Yverdon", "required": "required"}
         ),
     )
+
+    country = CountryField().formfield(initial="CH")
+
     phone_first = forms.CharField(
         label=_("Téléphone principal"),
         max_length=20,

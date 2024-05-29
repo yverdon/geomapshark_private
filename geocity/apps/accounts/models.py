@@ -15,6 +15,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
+from django_countries.fields import CountryField
 from simple_history.models import HistoricalRecords
 from taggit.managers import TaggableManager
 
@@ -556,6 +557,12 @@ class UserProfile(models.Model):
     city = models.CharField(
         _("Ville"),
         max_length=100,
+    )
+    country = CountryField(
+        _("Pays"),
+        null=True,
+        blank=False,
+        default="CH",
     )
     phone_first = models.CharField(
         _("Téléphone principal"),

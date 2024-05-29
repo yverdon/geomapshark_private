@@ -8,6 +8,7 @@ asgiref==3.8.1
     # via
     #   django
     #   django-cors-headers
+    #   django-countries
     #   django-simple-history
 beautifulsoup4==4.12.3
     # via
@@ -76,6 +77,8 @@ django-ckeditor-5==0.2.12
 django-constance==3.1.0
     # via -r requirements.in
 django-cors-headers==4.3.1
+    # via -r requirements.in
+django-countries==7.6.1
     # via -r requirements.in
 django-crispy-forms==1.14.0
     # via -r requirements.in
@@ -226,6 +229,7 @@ tablib[xlsx]==3.6.1
 typing-extensions==4.11.0
     # via
     #   asgiref
+    #   django-countries
     #   jwcrypto
     #   qrcode
 tzdata==2024.1

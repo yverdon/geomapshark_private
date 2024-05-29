@@ -27,6 +27,7 @@ djangorestframework-gis
 inflection
 django-cors-headers
 django-constance
+django-countries
 django-two-factor-auth[phonenumbers]==1.14.0
 django-taggit
 filetype
