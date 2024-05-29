@@ -87,7 +87,7 @@ django-formtools==2.5.1
     # via django-two-factor-auth
 django-ipware==6.0.5
     # via django-axes
-django-jazzmin==2.6.1
+django-jazzmin==3.0.0
     # via -r requirements.in
 django-jsoneditor==0.2.4
     # via -r requirements.in

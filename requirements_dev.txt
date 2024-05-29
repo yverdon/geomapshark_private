@@ -126,7 +126,7 @@ django-ipware==6.0.5
     # via
     #   -r requirements.txt
     #   django-axes
-django-jazzmin==2.6.1
+django-jazzmin==3.0.0
     # via -r requirements.txt
 django-jsoneditor==0.2.4
     # via -r requirements.txt
