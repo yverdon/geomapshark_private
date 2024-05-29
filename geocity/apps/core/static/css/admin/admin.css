@@ -15,3 +15,26 @@
 tr .select2 {
     width: 70% !important;
 }
+
+/* tweak admin-sortable2 for jazzmin compatibility with tabular inlines */
+
+tbody .original {
+    width: 100px;;
+}
+
+tbody .field-field {
+    width: 500px;
+}
+
+tbody .delete {
+    width: 50px;
+    text-align: right;
+}
+
+thead .original {
+    width: 80%;
+}
+
+thead .column-field {
+    display: none;
+}
