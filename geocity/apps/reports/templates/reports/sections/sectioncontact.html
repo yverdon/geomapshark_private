@@ -28,6 +28,9 @@
                         {% if contact.city %}
                             <span class="bold">Localité : </span>{{contact.city}}<br>
                         {% endif %}
+                        {% if contact.country %}
+                            <span class="bold">Pays : </span>{{contact.country.name}}<br>
+                        {% endif %}
                         {% if contact.company_name %}
                             <span class="bold">Raison sociale : </span>{{contact.company_name}}<br>
                         {% endif %}

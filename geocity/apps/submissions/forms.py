@@ -27,6 +27,7 @@ from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+from django_countries.fields import CountryField
 from django_select2.forms import Select2MultipleWidget, Select2Widget
 
 from geocity.apps.accounts.models import (
@@ -898,8 +899,8 @@ class SubmissionContactForm(forms.ModelForm):
         "company_name",
         "vat_number",
         "address",
-        "address",
         "city",
+        "country",
         "phone",
         "zipcode",
         "email",
@@ -974,6 +975,10 @@ class SubmissionContactForm(forms.ModelForm):
                 "placeholder": "ex: Yverdon",
             }
         ),
+    )
+    country = CountryField().formfield(
+        label=_("Pays"),
+        widget=forms.Select(attrs={"class": "country"}),
     )
     company_name = forms.CharField(
         required=False,

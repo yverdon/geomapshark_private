@@ -13,6 +13,9 @@
         {{recipient.last_name}} {{recipient.first_name}}<br>
         {{recipient.address}}<br>
         {{recipient.zipcode}} {{recipient.city}}
+        {% if recipient.country %}
+            <br>{{recipient.country.name}}
+        {% endif %}
     </div>
 </div>
 {% endblock %}

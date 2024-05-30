@@ -1,15 +1,30 @@
 let update_form_value = function(item, userprofile) {
-
   if (document.getElementById(`self_contact_${parseInt(item) + 1}`).checked == true) {
     document.getElementById(`id_form-${item}-first_name`).value = userprofile.first_name;
     for (const [key, value] of Object.entries(userprofile)) {
-      document.getElementById(`id_form-${item}-${key}`).value = value;
-      document.getElementById(`id_form-${item}-${key}`).readOnly = true;
+      let element = document.getElementById(`id_form-${item}-${key}`);
+      if (element !== null) {
+        element.value = value;
+        // Pseudo disable the dropdown with CSS instead of setting it read-only
+        if (key === "country") {
+          element.classList.add("disabled-dropdown");
+        } else {
+          element.readOnly = true;
+        }
+      }
     }
   } else {
     for (const [key, value] of Object.entries(userprofile)) {
-      document.getElementById(`id_form-${item}-${key}`).value = '';
-      document.getElementById(`id_form-${item}-${key}`).readOnly = false;
+      let element = document.getElementById(`id_form-${item}-${key}`);
+      if (element !== null) {
+        element.value = '';
+        element.readOnly = false;
+        if (key === "country") {
+          element.classList.remove("disabled-dropdown");
+        } else {
+          element.readOnly = false;
+        }
+      }
     }
   }
 }
@@ -17,7 +32,11 @@ let update_form_value = function(item, userprofile) {
 // Create a label to replace .form-control without .extra-form in classes inside of forms-container
 window.addEventListener('load', function () {
   var forms_control = document.querySelectorAll("[id=forms-container] select[class*=form-control]");
-  for (form_control of forms_control) {
+  for (let form_control of forms_control) {
+    // Skip the country select field
+    if (form_control.classList.contains("country")) {
+      continue;
+    }
     let elem = document.createElement('label');
     let text = form_control.querySelector("option[selected]").text
     let div = form_control.closest('.col-md-9');

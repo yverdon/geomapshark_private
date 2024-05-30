@@ -1748,6 +1748,7 @@ def submission_contacts(request, submission_id):
         "address": request.user.userprofile.address,
         "zipcode": request.user.userprofile.zipcode,
         "city": request.user.userprofile.city,
+        "country": request.user.userprofile.country.code,
         "phone": request.user.userprofile.phone_first,
     }
 

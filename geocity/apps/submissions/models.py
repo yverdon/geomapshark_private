@@ -39,6 +39,7 @@ from django.utils.dateparse import parse_date
 from django.utils.functional import cached_property
 from django.utils.html import escape, format_html
 from django.utils.translation import gettext_lazy as _
+from django_countries.fields import CountryField
 from pdf2image import convert_from_path
 from PIL import Image
 from simple_history.models import HistoricalRecords
@@ -1466,6 +1467,11 @@ class Contact(models.Model):
     city = models.CharField(
         _("Ville"),
         max_length=100,
+    )
+    country = CountryField(
+        _("Pays"),
+        null=True,
+        blank=False,
     )
     phone = models.CharField(
         _("Téléphone"),
