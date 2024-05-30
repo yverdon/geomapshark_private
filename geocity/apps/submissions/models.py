@@ -1462,7 +1462,7 @@ class Contact(models.Model):
         max_length=100,
     )
     zipcode = models.PositiveIntegerField(
-        _("NPA"),
+        _("Code postal"),
     )
     city = models.CharField(
         _("Ville"),

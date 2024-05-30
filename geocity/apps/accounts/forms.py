@@ -5,7 +5,7 @@ from django import forms
 from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm, BaseUserCreationForm
-from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
+from django.core.validators import MinValueValidator, RegexValidator
 from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
 
@@ -227,8 +227,8 @@ class GenericUserProfileForm(forms.ModelForm):
     )
 
     zipcode = forms.IntegerField(
-        label=_("NPA"),
-        validators=[MinValueValidator(1000), MaxValueValidator(9999)],
+        label=_("Code postal"),
+        validators=[MinValueValidator(1)],
         widget=forms.NumberInput(attrs={"required": "required"}),
     )
     city = forms.CharField(
@@ -297,9 +297,8 @@ class SocialSignupForm(SignupForm):
     )
 
     zipcode = forms.IntegerField(
-        label=_("NPA"),
-        min_value=1000,
-        max_value=9999,
+        label=_("Code postal"),
+        min_value=1,
         widget=forms.NumberInput(attrs={"required": "required"}),
     )
 
@@ -320,7 +319,7 @@ class SocialSignupForm(SignupForm):
         widget=forms.TextInput(attrs={"placeholder": "ex: 024 111 22 22"}),
         validators=[
             RegexValidator(
-                regex=r"^(((\+41)\s?)|(0))?(\d{2})\s?(\d{3})\s?(\d{2})\s?(\d{2})$",
+                regex=r"^(?:\+(?:[0-9] ?){6,14}[0-9]|0\d(?: ?\d){8,13})$",
                 message="Seuls les chiffres et les espaces sont autorisés.",
             )
         ],

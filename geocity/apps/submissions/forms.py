@@ -18,13 +18,12 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis import forms as geoforms
 from django.core.exceptions import ValidationError
 from django.core.files import File
-from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
+from django.core.validators import MinValueValidator, RegexValidator
 from django.db import transaction
 from django.db.models import Max, Q
 from django.forms import modelformset_factory
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
@@ -935,10 +934,8 @@ class SubmissionContactForm(forms.ModelForm):
         ),
         validators=[
             RegexValidator(
-                regex=r"^(((\+41)\s?)|(0))?(\d{2})\s?(\d{3})\s?(\d{2})\s?(\d{2})$",
-                message=mark_safe(
-                    'Veuillez saisir un <a target="_blank" href="https://www.bakom.admin.ch/bakom/fr/page-daccueil/telecommunication/numerotation-et-telephonie.html">numéro de téléphone suisse valide</a>.'
-                ),
+                regex=r"^(?:\+(?:[0-9] ?){6,14}[0-9]|0\d(?: ?\d){8,13})$",
+                message="Seuls les chiffres et les espaces sont autorisés.",
             )
         ],
     )
@@ -963,8 +960,8 @@ class SubmissionContactForm(forms.ModelForm):
     )
 
     zipcode = forms.IntegerField(
-        label=_("NPA"),
-        validators=[MinValueValidator(1000), MaxValueValidator(9999)],
+        label=_("Code postal"),
+        validators=[MinValueValidator(1)],
         widget=forms.NumberInput(),
     )
     city = forms.CharField(
