@@ -24,7 +24,6 @@ def preprocess_field_format(value):
     """
 
     if isinstance(value, list):
-        print(len(value))
         if len(value) > 1:
             result = "- " + "<br>- ".join(str(item) for item in value)
         else:
@@ -34,7 +33,7 @@ def preprocess_field_format(value):
     if isinstance(value, bool):
         return "Vrai" if value else "Faux"
 
-    if value:
+    if value and isinstance(value, str):
         return mark_safe(value.replace("\r\n", "<br>").replace("\n", "<br>"))
 
     return value
