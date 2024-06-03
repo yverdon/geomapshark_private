@@ -251,7 +251,7 @@ class AdministrativeEntityManager(models.Manager):
             .filter(
                 departments__group__in=user.groups.all(),
             )
-            .order_by("ofs_id", "name")
+            .order_by("group_order", "name")
         )
 
 
@@ -271,7 +271,13 @@ class AdministrativeEntity(models.Model):
         max_length=128,
         blank=True,
     )
-    ofs_id = models.PositiveIntegerField(_("Numéro OFS"))
+    group_order = models.PositiveIntegerField(
+        _("Groupe et ordre"),
+        default=0,
+        help_text=_(
+            "Utilisé afin de grouper et définir l'ordre des entités.<br>Affichés par ordre croissant et groupés en cas de nombre identique"
+        ),
+    )
     link = models.URLField(_("Lien"), max_length=200, blank=True)
     archive_link = models.URLField(_("Archives externes"), max_length=1024, blank=True)
     general_informations = models.CharField(

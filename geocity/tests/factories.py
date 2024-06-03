@@ -82,7 +82,7 @@ class SuperUserFactory(factory.django.DjangoModelFactory):
 # In AgendaAPITestCase nothing was working cause FormFactory couldn't link to administrative entity.
 # The error was : accounts.AdministrativeEntity.None
 class AdministrativeEntityFactory(factory.django.DjangoModelFactory):
-    ofs_id = 0
+    group_order = 0
     name = factory.Faker("company")
     geom = MultiPolygon(Polygon(((1, 1), (1, 2), (2, 2), (1, 1))))
     is_single_form_submissions = False

@@ -477,7 +477,7 @@ msgid "name"
 msgstr ""
 
 #: geocity/apps/accounts/models.py:261
-msgid "Numéro OFS"
+msgid "Groupe et ordre"
 msgstr ""
 
 #: geocity/apps/accounts/models.py:262

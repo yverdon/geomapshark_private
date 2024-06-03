@@ -234,7 +234,7 @@ class AdministrativeEntitySerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "name",
-            "ofs_id",
+            "group_order",
             "link",
             "phone",
         )
