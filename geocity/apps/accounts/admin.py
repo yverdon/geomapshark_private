@@ -677,13 +677,51 @@ def get_sites_field(user):
     )
 
 
+class ReadOnlyTextInput(forms.TextInput):
+    def render(self, name, value, attrs=None, renderer=None):
+        return value
+
+
 class AdministrativeEntityAdminForm(forms.ModelForm):
     """Form class to configure an administrative entity (commune, organisation)"""
+
+    integrator_users = forms.CharField(
+        required=False, label="Intégrateurs", widget=forms.HiddenInput()
+    )
+
+    pilot_users = forms.CharField(
+        required=False, label="Pilotes", widget=forms.HiddenInput()
+    )
+
+    validator_users = forms.CharField(
+        required=False, label="Validateurs", widget=forms.HiddenInput()
+    )
+
+    def get_integrator_users(self):
+        return self.instance.get_integrator_users()
+
+    def get_pilot_users(self):
+        return self.instance.get_pilot_users()
+
+    def get_validator_users(self):
+        return self.instance.get_validator_users()
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("user")
         super().__init__(*args, **kwargs)
         self.fields["sites"] = get_sites_field(user)
+
+        instance = kwargs.get("instance")
+        if instance:
+            # Integrator users
+            self.fields["integrator_users"].widget = ReadOnlyTextInput()
+            self.initial["integrator_users"] = self.get_integrator_users()
+            # Pilot users
+            self.fields["pilot_users"].widget = ReadOnlyTextInput()
+            self.initial["pilot_users"] = self.get_pilot_users()
+            # Validator users
+            self.fields["validator_users"].widget = ReadOnlyTextInput()
+            self.initial["validator_users"] = self.get_validator_users()
 
     class Meta:
         model = models.AdministrativeEntityForAdminSite
@@ -710,6 +748,9 @@ class AdministrativeEntityAdminForm(forms.ModelForm):
             "services_fees_hourly_rate",
             "geom",
             "integrator",
+            "integrator_users",
+            "pilot_users",
+            "validator_users",
         ]
         exclude = ["enabled_status"]
         widgets = {
@@ -842,6 +883,16 @@ class AdministrativeEntityAdmin(IntegratorFilterMixin, admin.ModelAdmin):
                 "fields": ("services_fees_hourly_rate",),
                 "description": _(
                     "La tarification des prestations permet de saisir le tarif horaire de facturation des prestations pour l'entité administrative courante."
+                ),
+            },
+        ),
+        (
+            _("Utilisateurs"),
+            {
+                "fields": (
+                    "integrator_users",
+                    "pilot_users",
+                    "validator_users",
                 ),
             },
         ),
