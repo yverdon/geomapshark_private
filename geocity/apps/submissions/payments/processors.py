@@ -38,7 +38,7 @@ class PaymentProcessor:
         raise NotImplementedError
 
     def _create_internal_transaction(
-        self, submission, transaction_type=None, override_price=None
+        self, submission, transaction_type=None, override_price=None, extra_data=None
     ):
         price = submission.get_submission_price()
         if override_price is None:
@@ -53,6 +53,8 @@ class PaymentProcessor:
             "amount": amount,
             "currency": currency,
         }
+        if extra_data is not None:
+            create_kwargs.update({"extra_data": extra_data})
         if transaction_type is not None:
             create_kwargs["transaction_type"] = transaction_type
         return (
@@ -89,6 +91,7 @@ class PaymentProcessor:
             submission,
             transaction_type=self.transaction_class.TYPE_PROLONGATION,
             override_price=prolongation_price,
+            extra_data={"prolongation_date": prolongation_date},
         )
         if is_new_transaction:
             merchant_transaction_data = self.create_merchant_transaction(
@@ -105,7 +108,6 @@ class PaymentProcessor:
                             "submissions:confirm_prolongation_transaction",
                             kwargs={
                                 "pk": transaction.pk,
-                                "prolongation_date": prolongation_date,
                             },
                         )
                     ),

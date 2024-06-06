@@ -74,6 +74,8 @@ class Transaction(models.Model):
         default=TYPE_SUBMISSION,
     )
 
+    extra_data = models.JSONField(_("Données supplémentaires"), default=dict)
+
     class Meta:
         abstract = True
         ordering = ("-creation_date",)
@@ -81,6 +83,14 @@ class Transaction(models.Model):
     @property
     def can_have_status_changed(self):
         return self.amount > 0
+
+    @property
+    def has_been_confirmed(self):
+        return self.status in (
+            self.STATUS_PAID,
+            self.STATUS_TO_REFUND,
+            self.STATUS_REFUNDED,
+        )
 
     def set_refunded(self):
         self.status = self.STATUS_REFUNDED
@@ -135,6 +145,17 @@ class Transaction(models.Model):
         if read:
             output = output.read()
         return f"refund_{self.transaction_id}.pdf", output
+
+    def confirm_payment(self):
+        if self.transaction_type == self.TYPE_PROLONGATION:
+            prolongation_date = self.extra_data.get("prolongation_date")
+            if prolongation_date is None:
+                raise SuspiciousOperation
+            self.submission_price.submission.set_prolongation_requested_and_notify(
+                timezone.datetime.fromtimestamp(prolongation_date)
+            )
+        self.set_paid()
+        self.submission_price.submission.generate_and_save_pdf("confirmation", self)
 
 
 class ServiceFeeType(models.Model):

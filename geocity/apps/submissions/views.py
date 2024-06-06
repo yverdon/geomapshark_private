@@ -1500,43 +1500,6 @@ def submission_fields(request, submission_id):
     )
 
 
-def _set_prolongation_requested_and_notify(submission, request):
-    submission.prolongation_status = submission.PROLONGATION_STATUS_PENDING
-    submission.save()
-
-    attachments = []
-    if (
-        submission.requires_online_payment()
-        and submission.author.userprofile.notify_per_email
-    ):
-        attachments = submission.get_submission_payment_attachments("confirmation")
-        data = {
-            "subject": "{} ({})".format(
-                _("Votre demande de prolongation"), submission.get_forms_names_list()
-            ),
-            "users_to_notify": [submission.author.email],
-            "template": "submission_acknowledgment.txt",
-            "submission": submission,
-            "absolute_uri_func": request.build_absolute_uri,
-        }
-        services.send_email_notification(data, attachments=attachments)
-
-    # Send the email to the services
-    messages.success(request, _("Votre demande de prolongation a été envoyée"))
-
-    data = {
-        "subject": "{} ({})".format(
-            _("Une demande de prolongation vient d'être soumise"),
-            submission.get_forms_names_list(),
-        ),
-        "users_to_notify": submission.get_secretary_email(),
-        "template": "submission_prolongation_for_services.txt",
-        "submission": submission,
-        "absolute_uri_func": request.build_absolute_uri,
-    }
-    services.send_email_notification(data, attachments=attachments)
-
-
 @redirect_bad_status_to_detail
 @login_required
 @permanent_user_required
@@ -1604,7 +1567,10 @@ def submission_prolongation(request, submission_id):
                     return redirect(payment_url)
 
             obj = form.save()
-            _set_prolongation_requested_and_notify(obj, request)
+            obj.set_prolongation_requested_and_notify(
+                form.cleaned_data["prolongation_date"]
+            )
+            messages.success(request, _("Votre demande de prolongation a été envoyée"))
             return redirect("submissions:submissions_list")
     else:
         if submission.author != request.user:
@@ -2639,22 +2605,36 @@ class ChangeTransactionStatus(View):
         return redirect(reverse_lazy("submissions:submissions_list"))
 
 
-@method_decorator(login_required, name="dispatch")
 class ConfirmTransactionCallback(View):
     def get(self, request, pk, *args, **kwargs):
         transaction = get_transaction_from_id(pk)
         submission = transaction.submission_price.submission
 
-        if (
-            not request.user == submission.author
-            or not transaction.status == transaction.STATUS_UNPAID
-        ):
-            raise PermissionDenied
+        if transaction.has_been_confirmed:
+            return render(
+                request,
+                "submissions/submission_payment_callback_confirm.html",
+                {
+                    "submission": submission,
+                },
+            )
+
+        if transaction.status == transaction.STATUS_FAILED:
+            return render(
+                request,
+                "submissions/submission_payment_callback_fail.html",
+                {
+                    "submission": submission,
+                    "submission_url": reverse(
+                        "submissions:submission_submit",
+                        kwargs={"submission_id": submission.pk},
+                    ),
+                },
+            )
 
         processor = get_payment_processor(submission.get_form_for_payment())
         if processor.is_transaction_authorized(transaction):
-            submission.generate_and_save_pdf("confirmation", transaction)
-            transaction.set_paid()
+            transaction.confirm_payment()
             submission_submit_confirmed(request, submission.pk)
 
             return render(
@@ -2679,13 +2659,10 @@ class ConfirmTransactionCallback(View):
         )
 
 
-@method_decorator(login_required, name="dispatch")
 class FailTransactionCallback(View):
     def get(self, request, pk, *args, **kwargs):
         transaction = get_transaction_from_id(pk)
         submission = transaction.submission_price.submission
-        if not request.user == submission.author:
-            raise PermissionDenied
 
         transaction.set_failed()
 
@@ -2783,24 +2760,37 @@ def submission_validations_edit(request, submission_id):
     )
 
 
-@method_decorator(login_required, name="dispatch")
 class ConfirmProlongationTransactionView(View):
-    def get(self, request, pk, prolongation_date, *args, **kwargs):
+    def get(self, request, pk, *args, **kwargs):
         transaction = get_transaction_from_id(pk)
         submission = transaction.submission_price.submission
 
-        if (
-            not request.user == submission.author
-            or not transaction.status == transaction.STATUS_UNPAID
-        ):
-            raise PermissionDenied
+        if transaction.has_been_confirmed:
+            return render(
+                request,
+                "submissions/submission_payment_callback_confirm.html",
+                {
+                    "submission": submission,
+                },
+            )
+
+        if transaction.status == transaction.STATUS_FAILED:
+            return render(
+                request,
+                "submissions/submission_payment_callback_fail.html",
+                {
+                    "submission": submission,
+                    "submission_url": reverse(
+                        "submissions:submission_submit",
+                        kwargs={"submission_id": submission.pk},
+                    ),
+                },
+            )
 
         processor = get_payment_processor(submission.get_form_for_payment())
         if processor.is_transaction_authorized(transaction):
-            submission.generate_and_save_pdf("confirmation", transaction)
-            transaction.set_paid()
-            submission.prolongation_date = datetime.fromtimestamp(prolongation_date)
-            _set_prolongation_requested_and_notify(submission, request)
+            transaction.confirm_payment()
+            messages.success(request, _("Votre demande de prolongation a été envoyée"))
 
             return render(
                 request,
@@ -2824,13 +2814,10 @@ class ConfirmProlongationTransactionView(View):
         )
 
 
-@method_decorator(login_required, name="dispatch")
 class FailProlongationTransactionCallback(View):
     def get(self, request, pk, *args, **kwargs):
         transaction = get_transaction_from_id(pk)
         submission = transaction.submission_price.submission
-        if not request.user == submission.author:
-            raise PermissionDenied
 
         transaction.set_failed()
 

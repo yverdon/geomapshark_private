@@ -173,8 +173,16 @@ class PostFinanceCheckoutProcessor(PaymentProcessor):
             TransactionState.AUTHORIZED,
         )
 
+    def is_transaction_failed(self, transaction):
+        status = self._get_transaction_status(transaction)
+        return status in (
+            TransactionState.FAILED,
+            TransactionState.VOIDED,
+            TransactionState.DECLINE,
+        )
+
     def _create_internal_transaction(
-        self, submission, transaction_type=None, override_price=None
+        self, submission, transaction_type=None, override_price=None, extra_data=None
     ):
         # If there is a related existing transaction, which:
         # 1. Is still within the PostFinance authorization time window
@@ -203,7 +211,7 @@ class PostFinanceCheckoutProcessor(PaymentProcessor):
         if existing_transaction:
             return existing_transaction, False
         return super(PostFinanceCheckoutProcessor, self)._create_internal_transaction(
-            submission, transaction_type, override_price
+            submission, transaction_type, override_price, extra_data
         )
 
     def _save_merchant_data(self, transaction, merchant_transaction_data):

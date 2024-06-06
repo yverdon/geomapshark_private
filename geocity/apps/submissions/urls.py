@@ -132,7 +132,7 @@ urlpatterns = [
         name="confirm_transaction",
     ),
     path(
-        "transactions/confirm_prolongation/<int:pk>/<int:prolongation_date>",
+        "transactions/confirm_prolongation/<int:pk>",
         views.ConfirmProlongationTransactionView.as_view(),
         name="confirm_prolongation_transaction",
     ),

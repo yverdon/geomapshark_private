@@ -131,3 +131,23 @@ class SubmissionInquiryOpening(CronJobBase):
             inquiry.submission.save()
 
         logger.info("The submission opening Cronjob finished")
+
+
+class PaymentTransactionsStatusUpdate(CronJobBase):
+    RUN_EVERY_MINS = 1
+    schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
+
+    code = "submissions.payment_transactions_status_update"
+
+    def do(self):
+        try:
+            call_command("update_payment_transactions_status")
+        except CommandError:
+            logger.error(
+                "Error occured while trying to update the payment transactions "
+                "status from the Cronjob."
+            )
+        else:
+            logger.info(
+                "The payment transactions status update Cronjob finished successfully"
+            )

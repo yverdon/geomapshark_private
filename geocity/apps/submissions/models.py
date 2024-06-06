@@ -1308,6 +1308,39 @@ class Submission(models.Model):
             .first()
         )
 
+    def set_prolongation_requested_and_notify(self, prolongation_date):
+        from . import services
+
+        self.prolongation_status = self.PROLONGATION_STATUS_PENDING
+        self.prolongation_date = prolongation_date
+        self.save()
+
+        attachments = []
+        if self.requires_online_payment() and self.author.userprofile.notify_per_email:
+            attachments = self.get_submission_payment_attachments("confirmation")
+            data = {
+                "subject": "{} ({})".format(
+                    _("Votre demande de prolongation"), self.get_forms_names_list()
+                ),
+                "users_to_notify": [self.author.email],
+                "template": "submission_acknowledgment.txt",
+                "submission": self,
+                "absolute_uri_func": Submission.get_absolute_url,
+            }
+            services.send_email_notification(data, attachments=attachments)
+
+        data = {
+            "subject": "{} ({})".format(
+                _("Une demande de prolongation vient d'être soumise"),
+                self.get_forms_names_list(),
+            ),
+            "users_to_notify": self.get_secretary_email(),
+            "template": "submission_prolongation_for_services.txt",
+            "submission": self,
+            "absolute_uri_func": Submission.get_absolute_url,
+        }
+        services.send_email_notification(data, attachments=attachments)
+
     # ServiceFees for submission
     def get_service_fees(self):
         return ServiceFee.objects.filter(submission=self)

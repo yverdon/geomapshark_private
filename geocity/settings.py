@@ -771,6 +771,9 @@ PAYMENT_PROCESSING_TEST_ENVIRONMENT = (
     os.getenv("PAYMENT_PROCESSING_TEST_ENVIRONMENT", "true").lower() == "true" or DEBUG
 )
 PAYMENT_CURRENCY = os.getenv("PAYMENT_CURRENCY")
+PAYMENT_PENDING_TRANSACTION_MAX_AGE_MINS = int(
+    os.getenv("PAYMENT_PENDING_TRANSACTION_MAX_AGE_MINS", 30)
+)
 
 # Services fees
 ## Default rate [CHF] for services fees
