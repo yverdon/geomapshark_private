@@ -18,7 +18,7 @@
                  aria-selected="{% if active_form == "amend" %}true{% else %}false{% endif %}">{% translate "Traitement" %}</a>
             </li>
           {% endif %}
-          {% if not submission.is_classified and forms.request_validation %}
+          {% if not submission.is_classified and forms.request_validation and not submission.validation_by_validators_is_disabled %}
             <li class="nav-item">
               <a class="btn btn-primary btn-action nav-link{% if active_form == "request_validation" %} active{% endif %}"
                  id="request-validation-tab"
@@ -199,7 +199,7 @@
               {% endif %}
             </div>
           {% endif %}
-          {% if not submission.is_classified and forms.request_validation %}
+          {% if not submission.is_classified and forms.request_validation and not submission.validation_by_validators_is_disabled %}
             <div class="tab-pane{% if active_form == "request_validation" %} show active{% endif %}"
                  id="request-validation"
                  role="tabpanel"
