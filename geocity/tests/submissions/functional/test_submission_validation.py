@@ -67,6 +67,76 @@ class SubmissionValidationRequestTestCase(LoggedInSecretariatMixin, TestCase):
 
         self.assertEqual(response.status_code, 400)
 
+    def test_secretariat_see_validation_tab_for_submitted_submission(
+        self,
+    ):
+        validator_group = factories.ValidatorGroupFactory(
+            department__administrative_entity=self.administrative_entity
+        )
+        submission = factories.SubmissionFactory(
+            author=self.user,
+            administrative_entity=self.administrative_entity,
+        )
+        form = factories.FormWithoutGeometryFactory(
+            needs_date=False,
+        )
+        submission.forms.set([form])
+        self.client.post(
+            reverse(
+                "submissions:submission_submit",
+                kwargs={"submission_id": submission.pk},
+            ),
+            data={
+                "departments": [validator_group.permit_department.pk],
+            },
+        )
+        submission.refresh_from_db()
+
+        response = self.client.get(
+            reverse(
+                "submissions:submission_detail",
+                kwargs={"submission_id": submission.pk},
+            )
+        )
+        self.assertEqual(response.status_code, 200)
+        parser = get_parser(response.content)
+        self.assertEqual(len(parser.select("#request-validation")), 1)
+
+    def test_secretariat_cannot_see_validation_tab_for_submitted_submission_when_validation_is_disabled(
+        self,
+    ):
+        validator_group = factories.ValidatorGroupFactory(
+            department__administrative_entity=self.administrative_entity
+        )
+        submission = factories.SubmissionFactory(
+            author=self.user,
+            administrative_entity=self.administrative_entity,
+        )
+        form = factories.FormWithoutGeometryFactory(
+            needs_date=False, disable_validation_by_validators=True
+        )
+        submission.forms.set([form])
+        self.client.post(
+            reverse(
+                "submissions:submission_submit",
+                kwargs={"submission_id": submission.pk},
+            ),
+            data={
+                "departments": [validator_group.permit_department.pk],
+            },
+        )
+        submission.refresh_from_db()
+
+        response = self.client.get(
+            reverse(
+                "submissions:submission_detail",
+                kwargs={"submission_id": submission.pk},
+            )
+        )
+        self.assertEqual(response.status_code, 200)
+        parser = get_parser(response.content)
+        self.assertEqual(len(parser.select("#request-validation")), 0)
+
     def test_default_departments_are_checked(self):
         default_validator_groups = factories.ValidatorGroupFactory.create_batch(
             2,
