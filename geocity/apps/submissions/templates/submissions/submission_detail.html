@@ -219,9 +219,19 @@
                   {% if validation.comment_is_visible_by_author or current_user != submission.author %}
                     <dt>{% translate "Commentaire" %}:</dt> <dd> {{ validation.comment|linebreaksbr }} </dd>
                     {% if current_user != submission.author %}
-                      <dt>{% translate "Commentaire visible par l'auteur de la demande" %}:</dt>
+                      {% comment %} résumé {% endcomment %}
+                      <dt>{% translate "Visible dans le résumé pour l'auteur de la demande" %}:</dt>
                       <dd>
                       {% if validation.comment_is_visible_by_author %}
+                        <i class="fa fa-check-circle" aria-hidden="true"></i>
+                      {% else %}
+                        <i class="fa fa-times-circle" aria-hidden="true"></i>
+                      {% endif %}
+                      </dd>
+                      {% comment %} modèle d'impression {% endcomment %}
+                      <dt>{% translate "Visible dans le modèle d'impression" %}:</dt>
+                      <dd>
+                      {% if validation.comment_is_visible_in_reports %}
                         <i class="fa fa-check-circle" aria-hidden="true"></i>
                       {% else %}
                         <i class="fa fa-times-circle" aria-hidden="true"></i>

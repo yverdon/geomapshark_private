@@ -1836,6 +1836,7 @@ class SubmissionValidationForm(forms.ModelForm):
             user, submission
         ):
             self.fields["comment_is_visible_by_author"].disabled = True
+            self.fields["comment_is_visible_in_reports"].disabled = True
 
         self.fields["validation_status"].choices = [
             (
@@ -1851,11 +1852,13 @@ class SubmissionValidationForm(forms.ModelForm):
             "validation_status",
             "comment",
             "comment_is_visible_by_author",
+            "comment_is_visible_in_reports",
         ]
         widgets = {
             "validation_status": forms.RadioSelect(),
             "comment": forms.Textarea(attrs={"rows": 3}),
             "comment_is_visible_by_author": forms.CheckboxInput(),
+            "comment_is_visible_in_reports": forms.CheckboxInput(),
         }
 
 
@@ -2386,7 +2389,12 @@ def get_submission_forms(submission):
 class SubmissionValidationsForm(forms.ModelForm):
     class Meta:
         model = models.SubmissionValidation
-        fields = ["department", "comment", "comment_is_visible_by_author"]
+        fields = [
+            "department",
+            "comment",
+            "comment_is_visible_by_author",
+            "comment_is_visible_in_reports",
+        ]
 
     def __init__(self, *args, **kwargs):
         super(SubmissionValidationsForm, self).__init__(*args, **kwargs)

@@ -2046,7 +2046,11 @@ class SubmissionValidation(models.Model):
         blank=True,
     )
     comment_is_visible_by_author = models.BooleanField(
-        _("Commentaire visible par l'auteur de la demande"), default=True
+        _("Commentaire visible dans le résumé pour l'auteur de la demande"),
+        default=False,
+    )
+    comment_is_visible_in_reports = models.BooleanField(
+        _("Commentaire visible dans le modèle d'impression"), default=True
     )
     validated_by = models.ForeignKey(
         User, verbose_name=_("Validé par"), null=True, on_delete=models.SET_NULL
