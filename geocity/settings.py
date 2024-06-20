@@ -179,6 +179,7 @@ INSTALLED_APPS = [
     "jazzmin",
     "jsoneditor",
     "django_ckeditor_5",
+    "django_countries",
     "django_jsonform",
     "django_select2",
     # django contrib apps
@@ -776,3 +777,12 @@ PAYMENT_CURRENCY = os.getenv("PAYMENT_CURRENCY")
 ## Default rate [CHF] for services fees
 DEFAULT_SERVICES_FEES_RATE = 0.00
 DEFAULT_CURRENCY = "CHF"
+
+# Countries
+COUNTRIES_FIRST = [
+    "CH",
+    "FR",
+    "DE",
+    "IT",
+]
+COUNTRIES_FIRST_BREAK = "---------"

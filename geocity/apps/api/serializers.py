@@ -451,6 +451,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "zipcode",
             "user_id",
             "city",
+            "country",
             "company_name",
             "vat_number",
             "iban",
