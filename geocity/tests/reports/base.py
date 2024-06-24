@@ -102,7 +102,7 @@ class ReportsTestsBase(LiveServerTestCase):
         # Create the admin entity
         admin_entity = accounts_models.AdministrativeEntity.objects.create(
             name="entity",
-            ofs_id=1,
+            group_order=1,
             integrator=group,
             geom="SRID=2056;MultiPolygon (((2538512 1181638, 2538447 1180620, 2539787 1180606, 2539784 1181553, 2538512 1181638)))",
         )

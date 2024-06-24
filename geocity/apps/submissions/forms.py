@@ -109,8 +109,10 @@ def get_field_cls_for_field(field):
         raise KeyError(f"Field of type {e} is not supported.")
 
 
-def regroup_by_ofs_id(entities):
-    return groupby(entities.order_by("ofs_id", "name"), lambda entity: entity.ofs_id)
+def regroup_by_group_order(entities):
+    return groupby(
+        entities.order_by("group_order", "name"), lambda entity: entity.group_order
+    )
 
 
 def disable_form(form, editable_fields=None):
@@ -184,8 +186,8 @@ class AdministrativeEntityForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         self.fields["administrative_entity"].choices = [
-            (ofs_id, [(entity.pk, entity.name) for entity in entities])
-            for ofs_id, entities in regroup_by_ofs_id(administrative_entities)
+            (group_order, [(entity.pk, entity.name) for entity in entities])
+            for group_order, entities in regroup_by_group_order(administrative_entities)
         ]
 
     def save(self, author):

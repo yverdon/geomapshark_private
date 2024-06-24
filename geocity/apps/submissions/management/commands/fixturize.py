@@ -193,7 +193,7 @@ class Command(BaseCommand):
                 self.setup_site(entity)
                 self.stdout.write(" • Creating administrative entity...")
                 administrative_entity = self.create_administrative_entity(
-                    entity, module.ofs_ids[idx], module.geoms[idx]
+                    entity, module.group_orders[idx], module.geoms[idx]
                 )
                 self.stdout.write(" • Creating users...")
                 integrator_group = self.create_users(
@@ -1087,11 +1087,11 @@ Après : Excellent projet qui bénéficiera à la communauté."""
             integrator_email_domains=integrator_email_domains,
         )
 
-    def create_administrative_entity(self, entity, ofs_id, geom):
+    def create_administrative_entity(self, entity, group_order, geom):
         name = f"{entity}"
         administrative_entity = AdministrativeEntity.objects.create(
             name=name,
-            ofs_id=ofs_id,
+            group_order=group_order,
             link="https://mapnv.ch",
             archive_link="https://mapnv.ch",
             geom=geom,
