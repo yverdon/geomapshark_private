@@ -8,7 +8,9 @@ from django.db import models
 from django.db.models import BooleanField, Count, ExpressionWrapper, Q, UniqueConstraint
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.urls import reverse
 from django.utils.functional import cached_property
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
 from simple_history.models import HistoricalRecords
@@ -407,6 +409,37 @@ class AdministrativeEntity(models.Model):
                 user_id=user.id,
                 zipcode=settings.ANONYMOUS_USER_ZIPCODE,
             )
+
+    def get_user_list(self, users):
+        if users:
+            list_content = []
+            for user in users:
+                url = reverse("admin:auth_user_change", kwargs={"object_id": user.id})
+                list_content.append(
+                    f"<li><a href='{url}'>{user.get_full_name()}</a></li>"
+                )
+            list_html = "\n".join(list_content)
+            return mark_safe(f"<ul>{list_html}</ul>")
+        else:
+            return f"<ul><li>{_('Aucun utilisateur trouvé')}</li></ul>"
+
+    def get_integrator_users(self):
+        integrator_users = User.objects.filter(groups=self.integrator)
+        return self.get_user_list(integrator_users)
+
+    def get_pilot_users(self):
+        pilot_users = User.objects.filter(
+            groups__permit_department__administrative_entity=self.pk,
+            groups__permit_department__is_backoffice=True,
+        )
+        return self.get_user_list(pilot_users)
+
+    def get_validator_users(self):
+        validator_users = User.objects.filter(
+            groups__permit_department__administrative_entity=self.pk,
+            groups__permit_department__is_validator=True,
+        )
+        return self.get_user_list(validator_users)
 
     def clean(self):
         from geocity.apps.forms.models import Form
