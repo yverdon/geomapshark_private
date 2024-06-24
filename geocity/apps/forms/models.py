@@ -60,7 +60,10 @@ class FormCategory(models.Model):
         limit_choices_to={"permit_department__is_integrator_admin": True},
     )
     meta_type = models.IntegerField(
-        _("Type générique"), choices=META_TYPE_CHOICES, default=META_TYPE_OTHER
+        _("Type générique"),
+        choices=META_TYPE_CHOICES,
+        default=META_TYPE_OTHER,
+        help_text="Utilisé dans le calendrier afin de filtrer par type d'événement",
     )
     tags = TaggableManager(
         blank=True,

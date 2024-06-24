@@ -3,6 +3,7 @@ import re
 from io import BytesIO
 
 from django.conf import settings
+from django.core.exceptions import SuspiciousOperation
 from django.db.models import Q
 from django.utils.text import get_valid_filename
 from PIL import Image
@@ -22,7 +23,11 @@ def get_mime_type(content):
     """
     Used to retrieve mime type in response.content of request
     """
-    image = Image.open(BytesIO(content))
+    try:
+        image = Image.open(BytesIO(content))
+    except:
+        raise SuspiciousOperation
+
     image_format = image.format
     mime_type = "image/" + image_format.lower()
     return mime_type

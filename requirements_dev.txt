@@ -9,6 +9,7 @@ asgiref==3.8.1
     #   -r requirements.txt
     #   django
     #   django-cors-headers
+    #   django-countries
     #   django-simple-history
 asttokens==2.4.1
     # via stack-data
@@ -107,6 +108,8 @@ django-ckeditor-5==0.2.12
 django-constance==3.1.0
     # via -r requirements.txt
 django-cors-headers==4.3.1
+    # via -r requirements.txt
+django-countries==7.6.1
     # via -r requirements.txt
 django-crispy-forms==1.14.0
     # via -r requirements.txt
@@ -382,6 +385,7 @@ typing-extensions==4.11.0
     # via
     #   -r requirements.txt
     #   asgiref
+    #   django-countries
     #   ipython
     #   jwcrypto
     #   qrcode

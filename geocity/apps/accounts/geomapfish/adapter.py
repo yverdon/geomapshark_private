@@ -42,6 +42,7 @@ class GeomapfishSocialAccountAdapter(DefaultSocialAccountAdapter):
             address=form.cleaned_data["address"],
             zipcode=form.cleaned_data["zipcode"],
             city=form.cleaned_data["city"],
+            country=form.cleaned_data["country"],
             phone_first=form.cleaned_data["phone_first"],
             phone_second=form.cleaned_data["phone_second"],
             company_name=form.cleaned_data["company_name"],
