@@ -1,3 +1,7 @@
+# ARCHIVE
+
+This Github repository has now been moved to Gitlab. Head over to https://gitlab.com/geocity/geocity/ .
+
 # Geocity - build your (geo)-forms easily! ![Geocity CI](https://github.com/yverdon/geocity/workflows/Geocity%20CI/badge.svg?branch=main)
 
 **[What is Geocity ?](https://geocity-asso.ch)**
