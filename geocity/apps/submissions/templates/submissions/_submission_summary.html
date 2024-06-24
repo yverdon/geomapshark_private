@@ -84,7 +84,11 @@
                     <div class="grid-element">
                       <dl>
                         <dt> {{ field_label }} </dt>
-                        <dd> {{ field_value }} </dd>
+                        {% if field_label == "Pays" %}
+                          <dd> {{ field_value.name }} </dd>
+                        {% else %}
+                          <dd> {{ field_value }} </dd>
+                        {% endif %}
                       </dl>
                     </div>
                     {% endif %}

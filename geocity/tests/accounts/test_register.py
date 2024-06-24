@@ -37,6 +37,7 @@ class TestRegisterView(TestCase, TestRegisterMixin):
             "address": "an address",
             "zipcode": 1007,
             "city": "Lausanne",
+            "country": "CH",
             "phone_first": "0789124692",
         }
 

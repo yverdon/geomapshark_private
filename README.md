@@ -2,7 +2,7 @@
 
 **[What is Geocity ?](https://geocity-asso.ch)**
 
-**[Features and user guide](https://github.com/yverdon/geocity/wiki)**
+**[Features and user guide](https://gitlab.com/geocity/geocity/-/wikis/home)**
 
 ## Setting up full Docker non persistent demo
 

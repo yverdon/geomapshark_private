@@ -2573,6 +2573,7 @@ class SubmissionActorsTestCase(LoggedInUserMixin, TestCase):
             "form-0-address": ["Main street 1"],
             "form-0-zipcode": ["2000"],
             "form-0-city": ["City"],
+            "form-0-country": ["CH"],
             "form-0-company_name": [""],
             "form-0-vat_number": [""],
             "form-0-id": [""],

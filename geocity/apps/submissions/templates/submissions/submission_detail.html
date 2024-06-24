@@ -56,6 +56,9 @@
           </dd>
           <dd>
             {{ submission.author.userprofile.address }}, {{ submission.author.userprofile.zipcode }} {{ submission.author.userprofile.city }}
+            {% if submission.author.userprofile.country %}
+              <br/>{{ submission.author.userprofile.country.name }}
+            {% endif %}
           </dd>
           <dd>
             <a href="tel:{{ submission.author.userprofile.phone_first }}" target="_blank" rel="noreferrer" title="{% translate 'Téléphone principal' %}">{{ submission.author.userprofile.phone_first }}</a>

@@ -3,12 +3,7 @@ from django.contrib.auth.models import Group, User
 from django.contrib.gis.db import models as geomodels
 from django.contrib.sites.models import Site
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
-from django.core.validators import (
-    FileExtensionValidator,
-    MaxValueValidator,
-    MinValueValidator,
-    RegexValidator,
-)
+from django.core.validators import FileExtensionValidator, RegexValidator
 from django.db import models
 from django.db.models import BooleanField, Count, ExpressionWrapper, Q, UniqueConstraint
 from django.db.models.signals import post_save
@@ -17,6 +12,7 @@ from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
+from django_countries.fields import CountryField
 from simple_history.models import HistoricalRecords
 from taggit.managers import TaggableManager
 
@@ -293,7 +289,7 @@ class AdministrativeEntity(models.Model):
         max_length=20,
         validators=[
             RegexValidator(
-                regex=r"^(((\+41)\s?)|(0))?(\d{2})\s?(\d{3})\s?(\d{2})\s?(\d{2})$",
+                regex=r"^(?:\+(?:[0-9] ?){6,14}[0-9]|0\d(?: ?\d){8,13})$",
                 message="Seuls les chiffres et les espaces sont autorisés.",
             )
         ],
@@ -583,19 +579,24 @@ class UserProfile(models.Model):
         max_length=100,
     )
     zipcode = models.PositiveIntegerField(
-        _("NPA"),
-        validators=[MinValueValidator(1000), MaxValueValidator(9999)],
+        _("Code postal"),
     )
     city = models.CharField(
         _("Ville"),
         max_length=100,
+    )
+    country = CountryField(
+        _("Pays"),
+        null=True,
+        blank=False,
+        default="CH",
     )
     phone_first = models.CharField(
         _("Téléphone principal"),
         max_length=20,
         validators=[
             RegexValidator(
-                regex=r"^(((\+41)\s?)|(0))?(\d{2})\s?(\d{3})\s?(\d{2})\s?(\d{2})$",
+                regex=r"^(?:\+(?:[0-9] ?){6,14}[0-9]|0\d(?: ?\d){8,13})$",
                 message="Seuls les chiffres et les espaces sont autorisés.",
             )
         ],
@@ -606,7 +607,7 @@ class UserProfile(models.Model):
         max_length=20,
         validators=[
             RegexValidator(
-                regex=r"^(((\+41)\s?)|(0))?(\d{2})\s?(\d{3})\s?(\d{2})\s?(\d{2})$",
+                regex=r"^(?:\+(?:[0-9] ?){6,14}[0-9]|0\d(?: ?\d){8,13})$",
                 message="Seuls les chiffres et les espaces sont autorisés.",
             )
         ],
